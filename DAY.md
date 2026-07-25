@@ -79,3 +79,27 @@
 - 재사용 후보: 아직 없음. 두 번째 사용처가 확인되기 전에는 역이식하지 않는다.
 - 게임에 남길 코드: 종이맥 규칙, 캔버스 렌더, 실제 입력 캡처, 깊이 A/B 어댑터.
 - 다음 게임에서 재검증할 항목: 자연 파열 뒤 전체 반동과 긴 파열 보호가 다른 누적 재료에서도 읽히는가.
+
+## 독립 검토 blocked 수정
+
+- 독립 검토 `design-review.json`은 sourceHash `6ee70486953d1ff8ed1b7f6f268538ea75f1ad5513db0ce92be7032fa5d77b75`에서 빠른 인접 봉합이 실제 포인터 `3.48초`, 키보드 `2.43초`에 무파열 완주해 60–80초 건설 리듬과 굵은 주름 선택을 우회한다는 fatal을 남겼다. 이 검토 파일은 수정하지 않았다.
+- 각 유효 봉합 뒤 순수 규칙 `step`이 `stabilizationRemaining`을 9초 동안 줄인다. 마지막 봉합도 안정화가 끝나야 성공한다. 주홍 실 끝이 구멍 가까이 팽팽한 상태에서 천천히 느슨해지고, 구멍 원형 진행과 이완 중 상태 문구가 같은 readiness를 보여 준다. 이때 실제 포인터로 다시 놓으면 봉합·실 차감 없이 종이 반동과 `아직 팽팽하다 / STILL TAUT`가 나오며, capture 해제 뒤 readiness에서 같은 drag가 정상 봉합된다.
+- 안정화 끝에는 가장 장력이 높은 미봉합 구멍으로 세 굵은 주름이 수렴하고 `느슨해졌다 · 굵은 주름부터 / LOOSE · FOLLOW THE BOLD CREASE`가 잠시 남는다. 첫판 가이드도 `실이 느슨해진 뒤 / When the strand loosens`를 명시한다.
+- `stitchPreview()`가 비용 `5 + 2.4d + 4 × tension + 1.5 × priorRuptures`, 봉합 뒤 실 잔량, 실제 놓은 직후 장력 `tension + 0.08 + 0.1d`, 파열 위험을 한 번 계산한다. 캔버스는 내부 비용 대신 `실 78.0 남음 / 78.0 THREAD LEFT`를 표시하고, predicted tension `0.72` 이상이면 놓기 전에 이중 외곽선과 진동 무늬를 그린다.
+- 성공 결과판은 화면 아래 137px의 58% 반투명 띠로 줄였다. 중앙의 들린 종이, 역광, 누적 주홍 잎맥은 가리지 않으며 실패 결과판은 원인 판독 대비를 유지한다.
+
+### 수정 검증
+
+- `npm test` — 4 files, 26 tests 통과. cooldown 조기 재입력 반동·readiness 뒤 복구, exact preview 비용과 실제 차감, predicted tension 위험 예고, 무입력, 마지막 안정화 뒤 60–80초 완주를 포함한다.
+- `npx tsc -b` — 오류 0.
+- `npm run build:web` — 성공, 주 번들 224.65KB / gzip 73.03KB.
+- `node scripts/capture-evidence.mjs` — `verification/capture-result.json` pass. 실제 포인터 target 7 preview는 predicted tension `0.83518`, 사전 위험 예고 true, 놓은 순간 확정 비용 `22.01792`와 실제 차감 `22.01792`가 일치하고 실제 파열했다. cooldown 중 같은 포인터 drag는 `closedCount=1`, `rejectedStitches=1`로 반동한 뒤 실제 readiness에서 `closedCount=2`로 회복했다. 실제 7봉합 완주는 `66.784669초`, 실패는 세 번째 파열 `19.783729초`; ko/en 가이드 시점, success/rupture/complete/fail, 콘솔·페이지·요청 오류 0을 확인했다.
+- 캡처 수정 중 첫 실행은 drag 중간의 stale target 3 preview를 읽어 evidence가 실패했다. 최종 target 7을 기다리게 고쳤다. 두 번째 실행은 drag 중 미세 장력 감쇠 전 preview와 놓는 순간 비용을 비교해 evidence가 실패했다. 화면과 규칙이 공유하는 놓는 순간 `lastCommittedPreview`를 실제 차감에 결속하고, 표시 잔량은 0.1 정밀도에서 일치하는지 분리 검증했다. 세 번째 실행의 이름별 13 checks는 모두 true다.
+- `node scripts/playability-sim.mjs 500` — `verification/playability-result.json` pass. 임의 9초 sleep 없이 실제 `stabilizationRemaining <= 0`만 보고 행동했다. 대표 행동 시각 `0, 9.00018, 18.00036, 27.00054, 36.00072, 45.0009, 54.00108초`; 500시드 굵은 주름 정책 완주율 `1.0`, 평균 `63.001초`, 평균 실 `41.720`, 평균 파열 `0`.
+- `node scripts/depth-ab.mjs` — `verification/depth-ab.json` pass. 같은 500시드에서 굵은 주름 정책 완주율 `1.0`, 먼 구멍 우선 정책 `0`, 완주율 우위 `+100%p`.
+- 무입력 actual step 기준 첫 파열 `16.750335초`, 세 번째 파열 종료 `25.600512초`.
+- `npm run smoke` — `smoke-result.json`에서 `mounted`, `finished`, `resultDelivered`, `restartVerified` 모두 true, 오류 0.
+- `node scripts/viewport-smoke.mjs` — `verification/viewport-result.json` pass. 4 뷰포트 × standalone/portal 8개 형상, 360×800 ko/en × standalone/portal 게임오버 4개가 모두 통과했다.
+- `npm run build:arcade` — 7개 불변 파일, 2,309,028 bytes, JS gzip 78,412 bytes; `release.json` 검증 통과.
+- `npm run csp` — `verification/csp-portal-result.json` pass. sandbox iframe 안 실제 drag가 `closedCount 0→1`, 확정 preview 비용과 실제 차감 일치, CSP 위반·누락 자산·오류 0.
+- 최종 sourceHash `af5e433e66853f7fdfdc4dbee902e222358ee6350743ae1e579b9c0d90c0adcb`가 capture, playability, depth A/B, smoke, viewport에 일치한다.

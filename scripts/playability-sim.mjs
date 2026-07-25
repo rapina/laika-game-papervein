@@ -165,7 +165,13 @@ export function writeResult(gameRoot, body) {
 // 뷰포트 게이트가 자리표시 게임에서 실패하는 것과 같은 뜻이다 — 게이트
 // 고장이 아니라 아직 게임이 없다는 뜻이니, 게이트를 끄지 말고 게임을 채운다.
 
-import { createState, renderModel, step, TICK_SECONDS } from '../src/game/papervein/rules.mjs'
+import {
+    createState,
+    renderModel,
+    step,
+    STABILIZATION_SECONDS,
+    TICK_SECONDS,
+} from '../src/game/papervein/rules.mjs'
 
 const available = (state) => Array.from({ length: 7 }, (_, i) => i + 1)
     .filter((hole) => !state.stitched[hole - 1])
@@ -184,23 +190,23 @@ function chooseIgnoringCrease(state, targets) {
     return [...targets].sort((a, b) => Math.abs(state.endpoint - b) - Math.abs(state.endpoint - a))[0]
 }
 
-function run(seed, choose, actionEvery = 9) {
+function run(seed, choose) {
     let state = createState(seed)
-    let nextAction = actionEvery
     const order = []
+    const actionTimes = []
     while (!state.over && state.elapsed < 110) {
-        if (state.elapsed >= nextAction) {
+        if (state.stabilizationRemaining <= 0) {
             const targets = available(state)
             if (!targets.length) break
             const target = choose(state, targets)
             order.push(target)
+            actionTimes.push(state.elapsed)
             state = step(state, { type: 'stitch', target })
-            nextAction += actionEvery
         } else {
             state = step(state)
         }
     }
-    return { state, model: renderModel(state), order }
+    return { state, model: renderModel(state), order, actionTimes }
 }
 
 function summarize(runs) {
@@ -260,7 +266,11 @@ function main() {
         pass: gate.pass && depthAdvantagePoints >= 25,
         failedGates: [...gate.failedGates, ...(depthAdvantagePoints >= 25 ? [] : ['depthAxisNotMaterial'])],
         tickSeconds: TICK_SECONDS,
-        actionIntervalSeconds: 9,
+        readiness: {
+            ruleState: 'stabilizationRemaining <= 0',
+            stabilizationSeconds: STABILIZATION_SECONDS,
+            representativeActionTimes: guidedRuns[0].actionTimes,
+        },
         evidence,
         guided,
         ignoringCrease,
@@ -277,7 +287,7 @@ function main() {
         },
         idle: idleBaseline(),
         limitations: [
-            'The construction simulation models one action every nine seconds; it does not model pointer aiming error.',
+            'The construction simulation acts only when the actual step state reports stabilizationRemaining <= 0; it does not model pointer aiming error.',
             'Decorative fiber flutter and paper micro-shake are intentionally outside the deterministic step.',
         ],
     }

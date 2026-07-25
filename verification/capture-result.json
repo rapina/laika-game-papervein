@@ -1,13 +1,68 @@
 {
-  "sourceHash": "6ee70486953d1ff8ed1b7f6f268538ea75f1ad5513db0ce92be7032fa5d77b75",
+  "sourceHash": "af5e433e66853f7fdfdc4dbee902e222358ee6350743ae1e579b9c0d90c0adcb",
   "input": "real Playwright pointer move/down/move/up on the rendered canvas",
   "guideAnswers": {
     "input": "Drag the vermilion loose end to an empty pressed hole.",
-    "timing": "Act toward the boldest physical crease.",
+    "timing": "Wait until the vermilion strand loosens, then follow the boldest physical crease.",
     "goal": "Close 7 gaps before 3 ruptures or the thread is spent."
   },
   "captures": {
     "firstPlay": {
+      "over": false,
+      "outcome": null,
+      "score": 10000,
+      "elapsed": 0.450009,
+      "thread": 100,
+      "ruptures": 0,
+      "closedCount": 0,
+      "endpoint": 0,
+      "selected": 1,
+      "guideVisible": true,
+      "guideTiming": "실이 느슨해진 뒤 굵은 주름부터",
+      "event": "start",
+      "stabilizationRemaining": 0,
+      "ready": true,
+      "rejectedStitches": 0,
+      "dragPreview": null,
+      "lastCommittedPreview": null,
+      "holes": [
+        {
+          "x": 154,
+          "y": 224
+        },
+        {
+          "x": 228,
+          "y": 300
+        },
+        {
+          "x": 148,
+          "y": 376
+        },
+        {
+          "x": 238,
+          "y": 452
+        },
+        {
+          "x": 157,
+          "y": 528
+        },
+        {
+          "x": 229,
+          "y": 604
+        },
+        {
+          "x": 151,
+          "y": 680
+        },
+        {
+          "x": 220,
+          "y": 756
+        }
+      ],
+      "paused": false,
+      "locale": "ko"
+    },
+    "firstPlayEnglish": {
       "over": false,
       "outcome": null,
       "score": 10000,
@@ -18,7 +73,13 @@
       "endpoint": 0,
       "selected": 1,
       "guideVisible": true,
+      "guideTiming": "When the strand loosens, follow the bold crease",
       "event": "start",
+      "stabilizationRemaining": 0,
+      "ready": true,
+      "rejectedStitches": 0,
+      "dragPreview": null,
+      "lastCommittedPreview": null,
       "holes": [
         {
           "x": 154,
@@ -54,20 +115,35 @@
         }
       ],
       "paused": false,
-      "locale": "ko"
+      "locale": "en"
     },
     "success": {
       "over": false,
       "outcome": null,
       "score": 19245,
-      "elapsed": 1.183357,
+      "elapsed": 1.200024,
       "thread": 92.461492,
       "ruptures": 0,
       "closedCount": 1,
       "endpoint": 1,
       "selected": 2,
       "guideVisible": true,
+      "guideTiming": "실이 느슨해진 뒤 굵은 주름부터",
       "event": "stitch",
+      "stabilizationRemaining": 8.783329,
+      "ready": false,
+      "rejectedStitches": 0,
+      "dragPreview": null,
+      "lastCommittedPreview": {
+        "target": 1,
+        "gap": 0,
+        "distance": 1,
+        "cost": 7.538508,
+        "remainingThread": 92.461492,
+        "predictedTension": 0.214627,
+        "wouldRupture": false,
+        "affordable": true
+      },
       "holes": [
         {
           "x": 154,
@@ -104,19 +180,44 @@
       ],
       "paused": false,
       "locale": "ko"
+    },
+    "riskPreview": {
+      "target": 7,
+      "gap": 6,
+      "distance": 7,
+      "cost": 22.02072,
+      "remainingThread": 77.97928,
+      "predictedTension": 0.83518,
+      "wouldRupture": true,
+      "affordable": true
     },
     "rupture": {
       "over": false,
       "outcome": null,
       "score": 16797,
       "elapsed": 1.216691,
-      "thread": 77.97728,
+      "thread": 77.98208,
       "ruptures": 1,
       "closedCount": 1,
       "endpoint": 7,
       "selected": 1,
       "guideVisible": true,
+      "guideTiming": "실이 느슨해진 뒤 굵은 주름부터",
       "event": "rupture",
+      "stabilizationRemaining": 8.866664,
+      "ready": false,
+      "rejectedStitches": 0,
+      "dragPreview": null,
+      "lastCommittedPreview": {
+        "target": 7,
+        "gap": 6,
+        "distance": 7,
+        "cost": 22.01792,
+        "remainingThread": 77.98208,
+        "predictedTension": 0.83448,
+        "wouldRupture": true,
+        "affordable": true
+      },
       "holes": [
         {
           "x": 154,
@@ -154,18 +255,292 @@
       "paused": false,
       "locale": "ko"
     },
+    "cooldownRecovery": {
+      "afterFirst": {
+        "over": false,
+        "outcome": null,
+        "score": 19235,
+        "elapsed": 0.966686,
+        "thread": 92.35926,
+        "ruptures": 0,
+        "closedCount": 1,
+        "endpoint": 1,
+        "selected": 2,
+        "guideVisible": true,
+        "guideTiming": "실이 느슨해진 뒤 굵은 주름부터",
+        "event": "stitch",
+        "stabilizationRemaining": 8.916665,
+        "ready": false,
+        "rejectedStitches": 0,
+        "dragPreview": null,
+        "lastCommittedPreview": {
+          "target": 1,
+          "gap": 0,
+          "distance": 1,
+          "cost": 7.64074,
+          "remainingThread": 92.35926,
+          "predictedTension": 0.240185,
+          "wouldRupture": false,
+          "affordable": true
+        },
+        "holes": [
+          {
+            "x": 154,
+            "y": 224
+          },
+          {
+            "x": 228,
+            "y": 300
+          },
+          {
+            "x": 148,
+            "y": 376
+          },
+          {
+            "x": 238,
+            "y": 452
+          },
+          {
+            "x": 157,
+            "y": 528
+          },
+          {
+            "x": 229,
+            "y": 604
+          },
+          {
+            "x": 151,
+            "y": 680
+          },
+          {
+            "x": 220,
+            "y": 756
+          }
+        ],
+        "paused": false,
+        "locale": "ko"
+      },
+      "rejected": {
+        "over": false,
+        "outcome": null,
+        "score": 19234,
+        "elapsed": 1.466696,
+        "thread": 92.35926,
+        "ruptures": 0,
+        "closedCount": 1,
+        "endpoint": 1,
+        "selected": 2,
+        "guideVisible": true,
+        "guideTiming": "실이 느슨해진 뒤 굵은 주름부터",
+        "event": "resist",
+        "stabilizationRemaining": 8.416655,
+        "ready": false,
+        "rejectedStitches": 1,
+        "dragPreview": null,
+        "lastCommittedPreview": {
+          "target": 1,
+          "gap": 0,
+          "distance": 1,
+          "cost": 7.64074,
+          "remainingThread": 92.35926,
+          "predictedTension": 0.240185,
+          "wouldRupture": false,
+          "affordable": true
+        },
+        "holes": [
+          {
+            "x": 154,
+            "y": 224
+          },
+          {
+            "x": 228,
+            "y": 300
+          },
+          {
+            "x": 148,
+            "y": 376
+          },
+          {
+            "x": 238,
+            "y": 452
+          },
+          {
+            "x": 157,
+            "y": 528
+          },
+          {
+            "x": 229,
+            "y": 604
+          },
+          {
+            "x": 151,
+            "y": 680
+          },
+          {
+            "x": 220,
+            "y": 756
+          }
+        ],
+        "paused": false,
+        "locale": "ko"
+      },
+      "ready": {
+        "over": false,
+        "outcome": null,
+        "score": 19226,
+        "elapsed": 9.950199,
+        "thread": 92.35926,
+        "ruptures": 0,
+        "closedCount": 1,
+        "endpoint": 1,
+        "selected": 2,
+        "guideVisible": true,
+        "guideTiming": "실이 느슨해진 뒤 굵은 주름부터",
+        "event": "ready",
+        "stabilizationRemaining": 0,
+        "ready": true,
+        "rejectedStitches": 1,
+        "dragPreview": null,
+        "lastCommittedPreview": {
+          "target": 1,
+          "gap": 0,
+          "distance": 1,
+          "cost": 7.64074,
+          "remainingThread": 92.35926,
+          "predictedTension": 0.240185,
+          "wouldRupture": false,
+          "affordable": true
+        },
+        "holes": [
+          {
+            "x": 154,
+            "y": 224
+          },
+          {
+            "x": 228,
+            "y": 300
+          },
+          {
+            "x": 148,
+            "y": 376
+          },
+          {
+            "x": 238,
+            "y": 452
+          },
+          {
+            "x": 157,
+            "y": 528
+          },
+          {
+            "x": 229,
+            "y": 604
+          },
+          {
+            "x": 151,
+            "y": 680
+          },
+          {
+            "x": 220,
+            "y": 756
+          }
+        ],
+        "paused": false,
+        "locale": "ko"
+      },
+      "recovered": {
+        "over": false,
+        "outcome": null,
+        "score": 28475,
+        "elapsed": 10.700214,
+        "thread": 84.85564,
+        "ruptures": 0,
+        "closedCount": 2,
+        "endpoint": 2,
+        "selected": 3,
+        "guideVisible": false,
+        "guideTiming": "실이 느슨해진 뒤 굵은 주름부터",
+        "event": "stitch",
+        "stabilizationRemaining": 8.766662,
+        "ready": false,
+        "rejectedStitches": 1,
+        "dragPreview": null,
+        "lastCommittedPreview": {
+          "target": 2,
+          "gap": 1,
+          "distance": 1,
+          "cost": 7.50362,
+          "remainingThread": 84.85564,
+          "predictedTension": 0.205905,
+          "wouldRupture": false,
+          "affordable": true
+        },
+        "holes": [
+          {
+            "x": 154,
+            "y": 224
+          },
+          {
+            "x": 228,
+            "y": 300
+          },
+          {
+            "x": 148,
+            "y": 376
+          },
+          {
+            "x": 238,
+            "y": 452
+          },
+          {
+            "x": 157,
+            "y": 528
+          },
+          {
+            "x": 229,
+            "y": 604
+          },
+          {
+            "x": 151,
+            "y": 680
+          },
+          {
+            "x": 220,
+            "y": 756
+          }
+        ],
+        "paused": false,
+        "locale": "ko"
+      },
+      "pointerPolicy": "same rendered drag is rejected while taut, then succeeds after actual readiness"
+    },
     "complete": {
       "over": true,
       "outcome": "complete",
-      "score": 74520,
-      "elapsed": 4.900098,
-      "thread": 45.247152,
-      "ruptures": 0,
+      "score": 73388,
+      "elapsed": 66.784669,
+      "thread": 44.545092,
+      "ruptures": 1,
       "closedCount": 7,
       "endpoint": 7,
       "selected": 7,
       "guideVisible": false,
+      "guideTiming": "실이 느슨해진 뒤 굵은 주름부터",
       "event": "complete",
+      "stabilizationRemaining": 0,
+      "ready": true,
+      "rejectedStitches": 0,
+      "dragPreview": null,
+      "lastCommittedPreview": {
+        "target": 7,
+        "gap": 6,
+        "distance": 1,
+        "cost": 10.4136,
+        "remainingThread": 44.545092,
+        "predictedTension": 0.5584,
+        "wouldRupture": false,
+        "affordable": true
+      },
       "holes": [
         {
           "x": 154,
@@ -206,15 +581,30 @@
     "gameOver": {
       "over": true,
       "outcome": "failed",
-      "score": 30986,
-      "elapsed": 3.83341,
-      "thread": 39.90098,
+      "score": 31028,
+      "elapsed": 19.783729,
+      "thread": 40.47378,
       "ruptures": 3,
       "closedCount": 3,
       "endpoint": 6,
       "selected": 2,
       "guideVisible": false,
+      "guideTiming": "실이 느슨해진 뒤 굵은 주름부터",
       "event": "failed",
+      "stabilizationRemaining": 9,
+      "ready": false,
+      "rejectedStitches": 0,
+      "dragPreview": null,
+      "lastCommittedPreview": {
+        "target": 6,
+        "gap": 5,
+        "distance": 5,
+        "cost": 17.928192,
+        "remainingThread": 40.47378,
+        "predictedTension": 0.812048,
+        "wouldRupture": true,
+        "affordable": true
+      },
       "holes": [
         {
           "x": 154,
@@ -256,9 +646,36 @@
   "consoleErrors": [],
   "pageErrors": [],
   "failedRequests": [],
+  "previewConsistency": {
+    "target": 7,
+    "displayedFormulaCost": 22.02072,
+    "displayedRemainingThread": 77.97928,
+    "committedFormulaCost": 22.01792,
+    "committedRemainingThread": 77.98208,
+    "actualThreadSpent": 22.01792,
+    "predictedTension": 0.83518,
+    "warnedBeforeRelease": true,
+    "rupturedAfterRelease": true,
+    "visibleAndCommittedRemainingMatchAtDisplayedPrecision": true
+  },
   "gameOverAnswers": {
     "ended": "The opaque result sheet and final title replace live play.",
     "restart": "The screen says to tap to mend again."
+  },
+  "checks": {
+    "guideTimingKo": true,
+    "guideTimingEn": true,
+    "pointerStitch": true,
+    "ruptureObserved": true,
+    "riskWarnedBeforeRelease": true,
+    "committedPreviewMatchesDeduction": true,
+    "displayedRemainingMatchesCommit": true,
+    "cooldownRejectedWithoutProgress": true,
+    "pointerRecoveredAfterReadiness": true,
+    "completedSeven": true,
+    "completedInPromisedWindow": true,
+    "failureGameOver": true,
+    "noErrors": true
   },
   "pass": true
 }

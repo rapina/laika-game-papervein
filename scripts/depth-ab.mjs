@@ -18,7 +18,7 @@ const report = {
     pass: result.pass && result.depthAB.completionAdvantagePercentagePoints >= 25,
     sourceHash: result.sourceHash,
     tickSeconds: result.tickSeconds,
-    actionIntervalSeconds: result.actionIntervalSeconds,
+    readiness: result.readiness,
     sameSeeds: result.depthAB.sameSeeds,
     axis: result.depthAB.axis,
     guided: result.guided,

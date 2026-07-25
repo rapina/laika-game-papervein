@@ -16,21 +16,41 @@
       "beforeClosed": 0,
       "afterClosed": 1,
       "event": "stitch",
-      "threadSpent": 7.66
+      "threadSpent": 7.66,
+      "previewCost": 7.661672,
+      "previewRemainingThread": 92.338328,
+      "previewPredictedTension": 0.245418,
+      "committedPreviewCost": 7.660472,
+      "previewConsistent": true
     },
     "game": {
       "state": {
         "over": false,
         "outcome": null,
         "score": 19233,
-        "elapsed": 0.950019,
-        "thread": 92.339928,
+        "elapsed": 0.966686,
+        "thread": 92.339528,
         "ruptures": 0,
         "closedCount": 1,
         "endpoint": 1,
         "selected": 2,
         "guideVisible": true,
+        "guideTiming": "실이 느슨해진 뒤 굵은 주름부터",
         "event": "stitch",
+        "stabilizationRemaining": 8.549991,
+        "ready": false,
+        "rejectedStitches": 0,
+        "dragPreview": null,
+        "lastCommittedPreview": {
+          "target": 1,
+          "gap": 0,
+          "distance": 1,
+          "cost": 7.660472,
+          "remainingThread": 92.339528,
+          "predictedTension": 0.245118,
+          "wouldRupture": false,
+          "affordable": true
+        },
         "holes": [
           {
             "x": 154,

@@ -4,6 +4,8 @@ import {
     createState,
     renderModel,
     step,
+    stitchPreview,
+    STABILIZATION_SECONDS,
     TICK_SECONDS,
     type PaperVeinState,
 } from './papervein/rules.mjs'
@@ -26,9 +28,13 @@ const COPY = {
         close: '봉합',
         ruptures: '파열',
         grab: '실 끝을 잡아 빈 구멍에 놓기',
-        when: '굵은 주름부터',
+        when: '실이 느슨해진 뒤 굵은 주름부터',
         goal: '7개 봉합 · 파열 3회 전',
         stitch: '당겨짐',
+        stabilizing: (seconds: number) => `섬유가 느슨해지는 중 ${seconds}초`,
+        ready: '느슨해졌다 · 굵은 주름부터',
+        resist: '아직 팽팽하다',
+        threadLeft: (thread: number) => `실 ${thread.toFixed(1)} 남음`,
         rupture: '파열',
         complete: '한 장이 되었다',
         failedRupture: '종이가 갈라졌다',
@@ -43,9 +49,13 @@ const COPY = {
         close: 'CLOSE',
         ruptures: 'RUPTURE',
         grab: 'Drag the loose end to an empty hole',
-        when: 'Follow the bold crease',
+        when: 'When the strand loosens, follow the bold crease',
         goal: 'Close 7 · before 3 ruptures',
         stitch: 'DRAWN TIGHT',
+        stabilizing: (seconds: number) => `STRAND LOOSENING ${seconds}s`,
+        ready: 'LOOSE · FOLLOW THE BOLD CREASE',
+        resist: 'STILL TAUT',
+        threadLeft: (thread: number) => `${thread.toFixed(1)} THREAD LEFT`,
         rupture: 'RUPTURE',
         complete: 'MADE WHOLE',
         failedRupture: 'THE SHEET SPLIT',
@@ -93,10 +103,12 @@ export class PaperVeinGame implements GameRuntime {
     private dragging = false
     private dragPoint: Point | null = null
     private keyboardArmed = false
+    private lastCommittedPreview: ReturnType<typeof stitchPreview> = null
     private resultDelivered = false
     private restartAt = 0
     private feedbackLife = 0
     private ruptureLife = 0
+    private resistLife = 0
     private audio: AudioContext | null = null
     private muted = false
     private languageButton: HTMLButtonElement | null = null
@@ -191,7 +203,14 @@ export class PaperVeinGame implements GameRuntime {
 
     private loosePoint(): Point {
         const p = HOLES[this.state.endpoint]
-        return { x: p.x + (this.state.endpoint % 2 ? 44 : -44), y: p.y + 24 }
+        const side = this.state.endpoint % 2 ? 1 : -1
+        if (this.state.stabilizationRemaining <= 0) return { x: p.x + side * 44, y: p.y + 24 }
+        const loosened = 1 - this.state.stabilizationRemaining / STABILIZATION_SECONDS
+        const recoil = this.state.materialRecoil * Math.sin(performance.now() * 0.035) * 8
+        return {
+            x: p.x + side * (8 + 36 * loosened) + recoil,
+            y: p.y + 4 + 20 * loosened,
+        }
     }
 
     private onPointerDown = (event: PointerEvent) => {
@@ -270,8 +289,17 @@ export class PaperVeinGame implements GameRuntime {
 
     private stitch(target: number) {
         const serial = this.state.eventSerial
+        const committedPreview = this.state.stabilizationRemaining <= 0
+            ? stitchPreview(this.state, target)
+            : null
         this.state = step(this.state, { type: 'stitch', target })
         if (this.state.eventSerial === serial) return
+        if (this.state.lastEvent.type === 'resist') {
+            this.resistLife = 1
+            this.tone(92, 0.08, 0.045, 72)
+            return
+        }
+        this.lastCommittedPreview = committedPreview
         this.feedbackLife = 1
         if (this.state.lastEvent.type === 'rupture') {
             this.ruptureLife = 1
@@ -288,10 +316,15 @@ export class PaperVeinGame implements GameRuntime {
         this.resultDelivered = true
         this.restartAt = performance.now() + 700
         const model = renderModel(this.state)
-        ;(globalThis as unknown as Record<string, unknown>).__gameOverUiBoxes = [
-            { name: 'result-title', x: 50, y: 318, w: 290, h: 58 },
-            { name: 'result-restart', x: 45, y: 686, w: 300, h: 54 },
-        ]
+        ;(globalThis as unknown as Record<string, unknown>).__gameOverUiBoxes = this.state.outcome === 'complete'
+            ? [
+                { name: 'result-title', x: 48, y: 650, w: 294, h: 42 },
+                { name: 'result-restart', x: 45, y: 742, w: 300, h: 38 },
+            ]
+            : [
+                { name: 'result-title', x: 50, y: 318, w: 290, h: 58 },
+                { name: 'result-restart', x: 45, y: 686, w: 300, h: 54 },
+            ]
         this.callbacks?.onGameOver({ score: model.score, phase: this.state.closedCount })
         if (this.state.outcome === 'complete') this.tone(196, 0.35, 0.08, 293)
         else this.paperCrack()
@@ -340,6 +373,7 @@ export class PaperVeinGame implements GameRuntime {
         }
         this.feedbackLife = Math.max(0, this.feedbackLife - dt * 2.8)
         this.ruptureLife = Math.max(0, this.ruptureLife - dt * 1.9)
+        this.resistLife = Math.max(0, this.resistLife - dt * 2.4)
         this.draw()
         this.raf = requestAnimationFrame(this.frame)
     }
@@ -391,8 +425,9 @@ export class PaperVeinGame implements GameRuntime {
             ctx.fillRect(20, 120, 350, 690)
         }
         ctx.save()
-        const shake = this.ruptureLife > 0 ? Math.sin(performance.now() * 0.18) * this.ruptureLife * 3 : 0
-        ctx.translate(shake, -lift)
+        const ruptureShake = this.ruptureLife > 0 ? Math.sin(performance.now() * 0.18) * this.ruptureLife * 3 : 0
+        const settleRecoil = this.state.materialRecoil * Math.sin(performance.now() * 0.04) * 2.5
+        ctx.translate(ruptureShake + settleRecoil, -lift)
         ctx.beginPath()
         ctx.moveTo(42, 151)
         ctx.lineTo(347, 154)
@@ -444,6 +479,40 @@ export class PaperVeinGame implements GameRuntime {
         ctx.stroke()
         ctx.setLineDash([])
 
+        const preview = this.currentPreview()
+        const previewRisk = preview?.gap === i && preview.wouldRupture
+        if (previewRisk) {
+            ctx.strokeStyle = 'rgba(42,39,34,.92)'
+            ctx.lineWidth = 2.2
+            ctx.setLineDash([7, 3, 2, 3])
+            for (const offset of [5, 10]) {
+                ctx.beginPath()
+                ctx.moveTo(a.x + nx * (width + offset), a.y + ny * (width + offset))
+                ctx.quadraticCurveTo(
+                    mx + nx * (width * 1.5 + offset),
+                    my + ny * (width * 1.5 + offset),
+                    b.x + nx * (width + offset),
+                    b.y + ny * (width + offset),
+                )
+                ctx.stroke()
+            }
+            ctx.setLineDash([])
+            ctx.lineWidth = 1.4
+            for (let j = 0; j < 5; j += 1) {
+                const t = 0.2 + j * 0.15
+                const x = a.x + dx * t
+                const y = a.y + dy * t
+                const vibration = j % 2 ? 1 : -1
+                ctx.beginPath()
+                ctx.moveTo(x + nx * (width + 4), y + ny * (width + 4))
+                ctx.lineTo(
+                    x + nx * (width + 13) + dx / len * vibration * 3,
+                    y + ny * (width + 13) + dy / len * vibration * 3,
+                )
+                ctx.stroke()
+            }
+        }
+
         if (this.state.ruptureByGap[i]) {
             ctx.strokeStyle = 'rgba(42,39,34,.85)'
             ctx.lineWidth = 1.5
@@ -469,13 +538,24 @@ export class PaperVeinGame implements GameRuntime {
             const x = (a.x + b.x) / 2
             const y = (a.y + b.y) / 2
             const bold = i === model.highestTensionGap
-            const length = 12 + this.state.tension[i] * 38
-            ctx.strokeStyle = bold ? 'rgba(52,46,38,.75)' : 'rgba(74,65,53,.28)'
-            ctx.lineWidth = bold ? 2.4 : 1
+            const settle = this.state.stabilizationRemaining > 0 ? model.stabilizationProgress : 1
+            const length = 12 + this.state.tension[i] * 38 + (bold ? 15 * settle : 0)
+            ctx.strokeStyle = bold ? `rgba(52,46,38,${0.52 + settle * 0.4})` : 'rgba(74,65,53,.28)'
+            ctx.lineWidth = bold ? 2.4 + settle * 1.5 : 1
             for (let w = -1; w <= 1; w += 1) {
                 ctx.beginPath()
-                ctx.moveTo(x + w * 4, y)
-                ctx.quadraticCurveTo(x + (i % 2 ? -1 : 1) * length * .55, y - 9, x + (i % 2 ? -1 : 1) * length, y - 2 + w * 3)
+                const target = HOLES[i + 1]
+                const originX = bold ? target.x + (i % 2 ? 1 : -1) * length : x
+                const originY = bold ? target.y - 13 + w * 4 : y
+                const endX = bold ? target.x + w * 1.5 : x + (i % 2 ? -1 : 1) * length
+                const endY = bold ? target.y - 2 : y - 2 + w * 3
+                ctx.moveTo(originX, originY)
+                ctx.quadraticCurveTo(
+                    bold ? target.x + (i % 2 ? 1 : -1) * length * .35 : x + (i % 2 ? -1 : 1) * length * .55,
+                    bold ? target.y - 8 : y - 9,
+                    endX,
+                    endY,
+                )
                 ctx.stroke()
             }
         }
@@ -541,14 +621,42 @@ export class PaperVeinGame implements GameRuntime {
             const closest = this.availableTargets().reduce((best, hole) =>
                 distance(this.dragPoint!, HOLES[hole]) < distance(this.dragPoint!, HOLES[best]) ? hole : best,
             this.availableTargets()[0] ?? 1)
-            const cost = 5 + 2.4 * Math.abs(this.state.endpoint - closest)
+            const preview = stitchPreview(this.state, closest)
+            if (!preview) return
             ctx.fillStyle = 'rgba(31,27,23,.82)'
-            ctx.fillRect(end.x - 34, end.y - 38, 68, 24)
+            const labelWidth = this.locale === 'ko' ? 106 : 132
+            ctx.fillRect(end.x - labelWidth / 2, end.y - 39, labelWidth, 25)
             ctx.fillStyle = '#f1e7d0'
             ctx.font = '12px Galmuri11, monospace'
             ctx.textAlign = 'center'
-            ctx.fillText(`−${Math.round(cost)}`, end.x, end.y - 21)
+            ctx.fillText(COPY[this.locale].threadLeft(preview.remainingThread), end.x, end.y - 21)
         }
+        if (this.state.stabilizationRemaining > 0) this.drawStabilizationRing(ctx, start)
+    }
+
+    private currentPreview() {
+        if (!this.dragging || !this.dragPoint) return null
+        const targets = this.availableTargets()
+        if (!targets.length) return null
+        const closest = targets.reduce((best, hole) =>
+            distance(this.dragPoint!, HOLES[hole]) < distance(this.dragPoint!, HOLES[best]) ? hole : best,
+        targets[0])
+        return stitchPreview(this.state, closest)
+    }
+
+    private drawStabilizationRing(ctx: CanvasRenderingContext2D, center: Point) {
+        const progress = 1 - this.state.stabilizationRemaining / STABILIZATION_SECONDS
+        ctx.save()
+        ctx.lineWidth = 3
+        ctx.strokeStyle = 'rgba(42,39,34,.25)'
+        ctx.beginPath()
+        ctx.arc(center.x, center.y, 18, -Math.PI / 2, Math.PI * 1.5)
+        ctx.stroke()
+        ctx.strokeStyle = VERMILION
+        ctx.beginPath()
+        ctx.arc(center.x, center.y, 18, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * progress)
+        ctx.stroke()
+        ctx.restore()
     }
 
     private drawHud(ctx: CanvasRenderingContext2D) {
@@ -594,35 +702,68 @@ export class PaperVeinGame implements GameRuntime {
     private drawStatus(ctx: CanvasRenderingContext2D) {
         const isRupture = this.state.lastEvent.type === 'rupture' && this.ruptureLife > 0
         const isStitch = this.state.lastEvent.type === 'stitch' && this.feedbackLife > 0
-        if (!isRupture && !isStitch) return
-        const life = isRupture ? this.ruptureLife : this.feedbackLife
+        const isResist = this.state.lastEvent.type === 'resist' && this.resistLife > 0
+        const isReady = this.state.readyCueRemaining > 0 && this.state.lastEvent.type === 'ready'
+        const isStabilizing = this.state.stabilizationRemaining > 0
+        if (!isRupture && !isStitch && !isResist && !isReady && !isStabilizing) return
+        const life = isRupture ? this.ruptureLife
+            : isResist ? this.resistLife
+                : isReady ? Math.min(1, this.state.readyCueRemaining)
+                    : isStabilizing ? 1
+                        : this.feedbackLife
         ctx.globalAlpha = Math.min(1, life * 1.8)
         ctx.fillStyle = 'rgba(37,33,29,.86)'
-        ctx.fillRect(112, 799, 166, 30)
-        ctx.strokeStyle = isRupture ? '#f1e7d0' : VERMILION
+        ctx.fillRect(76, 799, 238, 30)
+        ctx.strokeStyle = isRupture || isResist ? '#f1e7d0' : VERMILION
         ctx.lineWidth = 1.5
-        ctx.strokeRect(112.5, 799.5, 165, 29)
+        ctx.strokeRect(76.5, 799.5, 237, 29)
         ctx.fillStyle = '#f1e7d0'
         ctx.textAlign = 'center'
-        ctx.font = '13px Galmuri14, monospace'
-        ctx.fillText(isRupture ? COPY[this.locale].rupture : COPY[this.locale].stitch, 195, 815)
+        ctx.font = this.locale === 'ko' ? '12px Galmuri14, monospace' : '11px Galmuri14, monospace'
+        const text = isRupture
+            ? COPY[this.locale].rupture
+            : isResist
+                ? COPY[this.locale].resist
+                : isReady
+                    ? COPY[this.locale].ready
+                    : isStabilizing
+                        ? COPY[this.locale].stabilizing(Math.ceil(this.state.stabilizationRemaining))
+                        : COPY[this.locale].stitch
+        ctx.fillText(text, 195, 815)
         ctx.globalAlpha = 1
     }
 
     private drawResult(ctx: CanvasRenderingContext2D) {
         const c = COPY[this.locale]
         const model = renderModel(this.state)
+        if (this.state.outcome === 'complete') {
+            ctx.fillStyle = 'rgba(31,27,23,.58)'
+            ctx.fillRect(34, 646, 322, 137)
+            ctx.strokeStyle = VERMILION
+            ctx.lineWidth = 2
+            ctx.strokeRect(35, 647, 320, 135)
+            ctx.textAlign = 'center'
+            ctx.fillStyle = '#f4ead4'
+            ctx.font = this.locale === 'ko' ? '22px Galmuri14, monospace' : '20px Galmuri14, monospace'
+            ctx.fillText(c.complete, 195, 678)
+            ctx.font = '12px Galmuri11, monospace'
+            ctx.fillStyle = '#eadcc0'
+            ctx.fillText(`${c.thread} ${Math.round(this.state.thread)} · ${Math.round(this.state.elapsed)}s · ${model.score}`, 195, 708)
+            ctx.fillText(c.correction(model.suggestedHole), 195, 735)
+            ctx.fillStyle = VERMILION
+            ctx.font = this.locale === 'ko' ? '14px Galmuri14, monospace' : '12px Galmuri14, monospace'
+            ctx.fillText(c.retry, 195, 764)
+            return
+        }
         ctx.fillStyle = 'rgba(31,27,23,.84)'
         ctx.fillRect(28, 276, 334, 474)
-        ctx.strokeStyle = this.state.outcome === 'complete' ? VERMILION : '#d9c8a9'
+        ctx.strokeStyle = '#d9c8a9'
         ctx.lineWidth = 2
         ctx.strokeRect(29, 277, 332, 472)
         ctx.textAlign = 'center'
         ctx.fillStyle = '#f4ead4'
         ctx.font = this.locale === 'ko' ? '25px Galmuri14, monospace' : '23px Galmuri14, monospace'
-        const title = this.state.outcome === 'complete'
-            ? c.complete
-            : this.state.endedReason === 'thread' ? c.failedThread : c.failedRupture
+        const title = this.state.endedReason === 'thread' ? c.failedThread : c.failedRupture
         ctx.fillText(title, 195, 350)
         ctx.font = '14px Galmuri11, monospace'
         ctx.fillStyle = '#d7c8aa'
@@ -716,8 +857,10 @@ export class PaperVeinGame implements GameRuntime {
         this.restartAt = 0
         this.feedbackLife = 0
         this.ruptureLife = 0
+        this.resistLife = 0
         this.dragging = false
         this.keyboardArmed = false
+        this.lastCommittedPreview = null
         this.accumulator = 0
         this.lastFrame = performance.now()
         ;(globalThis as unknown as Record<string, unknown>).__gameOverUiBoxes = []
@@ -738,7 +881,13 @@ export class PaperVeinGame implements GameRuntime {
             endpoint: this.state.endpoint,
             selected: this.state.selected,
             guideVisible: this.state.guideVisible,
+            guideTiming: COPY[this.locale].when,
             event: this.state.lastEvent.type,
+            stabilizationRemaining: this.state.stabilizationRemaining,
+            ready: this.state.stabilizationRemaining <= 0,
+            rejectedStitches: this.state.rejectedStitches,
+            dragPreview: this.currentPreview(),
+            lastCommittedPreview: this.lastCommittedPreview,
             holes: HOLES,
             paused: this.paused || this.hidden,
             locale: this.locale,

@@ -3,10 +3,11 @@ export const HOLE_COUNT: number
 export const GAP_COUNT: number
 export const MAX_THREAD: number
 export const MAX_RUPTURES: number
+export const STABILIZATION_SECONDS: number
 
 export type PaperVeinOutcome = 'complete' | 'failed' | null
 export type PaperVeinEvent = {
-    type: 'start' | 'stitch' | 'rupture' | 'complete' | 'failed'
+    type: 'start' | 'stitch' | 'resist' | 'ready' | 'rupture' | 'complete' | 'failed'
     target: number
     strength: number
 }
@@ -25,6 +26,10 @@ export type PaperVeinState = {
     ruptureByGap: number[]
     ruptures: number
     ruptureCooldown: number
+    stabilizationRemaining: number
+    readyCueRemaining: number
+    materialRecoil: number
+    rejectedStitches: number
     firstRuptureAt: number | null
     closedCount: number
     successfulStitches: number
@@ -45,6 +50,16 @@ export type PaperVeinInput =
     | null
 
 export function createState(seed?: number): PaperVeinState
+export function stitchPreview(state: PaperVeinState, target: number): {
+    target: number
+    gap: number
+    distance: number
+    cost: number
+    remainingThread: number
+    predictedTension: number
+    wouldRupture: boolean
+    affordable: boolean
+} | null
 export function step(state: PaperVeinState, input?: PaperVeinInput): PaperVeinState
 export function renderModel(state: PaperVeinState): {
     openness: number[]
@@ -59,6 +74,9 @@ export function renderModel(state: PaperVeinState): {
     ruptures: number
     closedCount: number
     elapsed: number
+    stabilizationRemaining: number
+    stabilizationProgress: number
+    ready: boolean
     over: boolean
     outcome: PaperVeinOutcome
 }

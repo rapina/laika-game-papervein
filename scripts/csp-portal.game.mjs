@@ -14,6 +14,8 @@ export async function act(page, frame, box) {
     await page.mouse.move(a.x, a.y)
     await page.mouse.down()
     await page.mouse.move(b.x, b.y, { steps: 18 })
+    await frame.waitForFunction(() => globalThis.__gameState?.dragPreview?.target === 1)
+    const preview = await frame.evaluate(() => globalThis.__gameState.dragPreview)
     await page.mouse.up()
     await delay(500)
     const after = await frame.evaluate(() => globalThis.__gameState)
@@ -23,6 +25,12 @@ export async function act(page, frame, box) {
         afterClosed: after.closedCount,
         event: after.event,
         threadSpent: +(before.thread - after.thread).toFixed(3),
+        previewCost: preview.cost,
+        previewRemainingThread: preview.remainingThread,
+        previewPredictedTension: preview.predictedTension,
+        committedPreviewCost: after.lastCommittedPreview.cost,
+        previewConsistent: Math.abs(after.lastCommittedPreview.cost - (before.thread - after.thread)) < 0.000001
+            && preview.remainingThread.toFixed(1) === after.lastCommittedPreview.remainingThread.toFixed(1),
     }
 }
 
@@ -37,7 +45,8 @@ export function judge(observed) {
     return {
         realPointerStitch: observed.play?.beforeClosed === 0
             && observed.play?.afterClosed === 1
-            && observed.play?.event === 'stitch',
+            && observed.play?.event === 'stitch'
+            && observed.play?.previewConsistent === true,
         hostReadyAndStarted: observed.game?.emittedEvents?.some((event) => event.type === 'ready')
             && observed.game?.emittedEvents?.some((event) => event.type === 'started'),
     }

@@ -3,6 +3,7 @@ export const HOLE_COUNT = 8
 export const GAP_COUNT = 7
 export const MAX_THREAD = 100
 export const MAX_RUPTURES = 3
+export const STABILIZATION_SECONDS = 9
 
 const clamp = (value, min, max) => Math.max(min, Math.min(max, value))
 const round6 = (value) => Math.round(value * 1_000_000) / 1_000_000
@@ -35,6 +36,10 @@ export function createState(seed = 1) {
         ruptureByGap: Array(GAP_COUNT).fill(0),
         ruptures: 0,
         ruptureCooldown: 0,
+        stabilizationRemaining: 0,
+        readyCueRemaining: 0,
+        materialRecoil: 0,
+        rejectedStitches: 0,
         firstRuptureAt: null,
         closedCount: 0,
         successfulStitches: 0,
@@ -45,6 +50,32 @@ export function createState(seed = 1) {
         endedReason: null,
         eventSerial: 0,
         lastEvent: { type: 'start', target: 0, strength: 0 },
+    }
+}
+
+export function stitchPreview(state, target) {
+    if (!Number.isInteger(target) || target < 1 || target >= HOLE_COUNT) return null
+    const gap = target - 1
+    if (state.stitched[gap]) return null
+    const distance = Math.abs(state.endpoint - target)
+    const cost = round6(5
+        + 2.4 * distance
+        + 4 * state.tension[gap]
+        + 1.5 * state.ruptureByGap[gap])
+    const predictedTension = round6(clamp(
+        state.tension[gap] + 0.08 + 0.1 * distance,
+        0,
+        1.2,
+    ))
+    return {
+        target,
+        gap,
+        distance,
+        cost,
+        remainingThread: round6(Math.max(0, state.thread - cost)),
+        predictedTension,
+        wouldRupture: predictedTension >= 0.72,
+        affordable: cost <= state.thread,
     }
 }
 
@@ -94,8 +125,22 @@ function applyStitch(state, target) {
     if (state.over || !Number.isInteger(target) || target < 1 || target >= HOLE_COUNT) return state
     const gap = target - 1
     if (state.stitched[gap]) return state
-    const distance = Math.abs(state.endpoint - target)
-    const cost = 5 + 2.4 * distance + 4 * state.tension[gap] + 1.5 * state.ruptureByGap[gap]
+    if (state.stabilizationRemaining > 0) {
+        return {
+            ...state,
+            materialRecoil: 1,
+            rejectedStitches: state.rejectedStitches + 1,
+            eventSerial: state.eventSerial + 1,
+            lastEvent: {
+                type: 'resist',
+                target: gap,
+                strength: clamp(state.stabilizationRemaining / STABILIZATION_SECONDS, 0.15, 1),
+            },
+        }
+    }
+    const preview = stitchPreview(state, target)
+    if (!preview) return state
+    const { distance, cost } = preview
     if (cost > state.thread) return finish({ ...state, thread: 0 }, 'failed', 'thread')
 
     const openness = [...state.openness]
@@ -118,7 +163,7 @@ function applyStitch(state, target) {
         ))
     }
     openness[gap] = 0.08
-    tension[gap] = round6(clamp(tension[gap] + 0.08 + 0.035 * distance, 0, 1.2))
+    tension[gap] = preview.predictedTension
     stitched[gap] = true
     const closedCount = stitched.filter(Boolean).length
     const successfulStitches = state.successfulStitches + 1
@@ -135,11 +180,13 @@ function applyStitch(state, target) {
         successfulStitches,
         consecutiveRuptures: 0,
         guideVisible: successfulStitches < 2,
+        stabilizationRemaining: STABILIZATION_SECONDS,
+        readyCueRemaining: 0,
+        materialRecoil: 0,
         eventSerial: state.eventSerial + 1,
         lastEvent: { type: 'stitch', target: gap, strength: clamp(distance / 7, 0.15, 1) },
     }
     if (tension[gap] >= 0.72) next = rupture(next, gap, true)
-    if (!next.over && closedCount === GAP_COUNT) next = finish(next, 'complete', 'mended')
     return next
 }
 
@@ -155,11 +202,16 @@ function advance(state) {
     if (state.over) return state
     const openness = [...state.openness]
     const tension = [...state.tension]
+    const wasStabilizing = state.stabilizationRemaining > 0
+    const stabilizationRemaining = Math.max(0, round6(state.stabilizationRemaining - TICK_SECONDS))
     let next = {
         ...state,
         tick: state.tick + 1,
         elapsed: round6(state.elapsed + TICK_SECONDS),
         ruptureCooldown: Math.max(0, round6(state.ruptureCooldown - TICK_SECONDS)),
+        stabilizationRemaining,
+        readyCueRemaining: Math.max(0, round6(state.readyCueRemaining - TICK_SECONDS)),
+        materialRecoil: Math.max(0, round6(state.materialRecoil - TICK_SECONDS * 3.2)),
         openness,
         tension,
     }
@@ -177,7 +229,32 @@ function advance(state) {
         }
     }
     if (breakingGap >= 0 && state.ruptureCooldown <= 0) next = rupture(next, breakingGap)
+    if (!next.over && wasStabilizing && stabilizationRemaining <= 0) {
+        if (next.closedCount === GAP_COUNT) {
+            next = finish(next, 'complete', 'mended')
+        } else {
+            next = {
+                ...next,
+                readyCueRemaining: 1.8,
+                eventSerial: next.eventSerial + 1,
+                lastEvent: {
+                    type: 'ready',
+                    target: highestUnstitchedTensionGap(next),
+                    strength: 1,
+                },
+            }
+        }
+    }
     return next
+}
+
+function highestUnstitchedTensionGap(state) {
+    let highest = state.stitched.findIndex((value) => !value)
+    if (highest < 0) return 0
+    for (let i = 0; i < GAP_COUNT; i += 1) {
+        if (!state.stitched[i] && state.tension[i] > state.tension[highest]) highest = i
+    }
+    return highest
 }
 
 export function step(state, input = null) {
@@ -193,11 +270,7 @@ export function step(state, input = null) {
 }
 
 export function renderModel(state) {
-    let highestTensionGap = state.stitched.findIndex((value) => !value)
-    if (highestTensionGap < 0) highestTensionGap = 0
-    for (let i = 0; i < GAP_COUNT; i += 1) {
-        if (!state.stitched[i] && state.tension[i] > state.tension[highestTensionGap]) highestTensionGap = i
-    }
+    const highestTensionGap = highestUnstitchedTensionGap(state)
     const maxOpenness = Math.max(...state.openness)
     const score = Math.max(0, Math.round(
         state.closedCount * 10_000 + state.thread * 100 - state.ruptures * 1_000 - state.elapsed,
@@ -215,6 +288,11 @@ export function renderModel(state) {
         ruptures: state.ruptures,
         closedCount: state.closedCount,
         elapsed: state.elapsed,
+        stabilizationRemaining: state.stabilizationRemaining,
+        stabilizationProgress: state.stabilizationRemaining > 0
+            ? round6(1 - state.stabilizationRemaining / STABILIZATION_SECONDS)
+            : 1,
+        ready: state.stabilizationRemaining <= 0,
         over: state.over,
         outcome: state.outcome,
     }
