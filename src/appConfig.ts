@@ -7,7 +7,7 @@
 
 /** localStorage key prefix. Set once per game and never change after release —
  *  changing it orphans every player's records/settings/entitlements. */
-export const STORAGE_PREFIX = 'gametemplate'
+export const STORAGE_PREFIX = 'papervein'
 
 export const APP_CONFIG = {
     /** Reserve the bottom banner-ad slot. false → the game gets the full 9:16 frame. */

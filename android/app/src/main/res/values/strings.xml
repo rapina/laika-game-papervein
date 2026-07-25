@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">Game Template</string>
-    <string name="title_activity_main">Game Template</string>
-    <string name="package_name">com.example.gametemplate</string>
-    <string name="custom_url_scheme">com.example.gametemplate</string>
+    <string name="app_name">Paper Vein</string>
+    <string name="title_activity_main">Paper Vein</string>
+    <string name="package_name">com.sputnikworkshop.papervein</string>
+    <string name="custom_url_scheme">com.sputnikworkshop.papervein</string>
 </resources>

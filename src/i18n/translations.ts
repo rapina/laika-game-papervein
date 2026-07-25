@@ -7,7 +7,7 @@ export type Locale = 'ko' | 'en' | 'zh' | 'ja'
  */
 export const translations: Record<Locale, Record<string, string>> = {
     ko: {
-        'title.name': 'GAME TEMPLATE',
+        'title.name': 'PAPER VEIN',
         'title.tagline': '새 게임을 시작하세요',
         'title.play': '시작',
         'title.ranking': '랭킹',
@@ -21,7 +21,7 @@ export const translations: Record<Locale, Record<string, string>> = {
         'error.leaderboard': '리더보드를 열 수 없습니다.',
     },
     en: {
-        'title.name': 'GAME TEMPLATE',
+        'title.name': 'PAPER VEIN',
         'title.tagline': 'Start your new game',
         'title.play': 'PLAY',
         'title.ranking': 'RANKING',
@@ -35,7 +35,7 @@ export const translations: Record<Locale, Record<string, string>> = {
         'error.leaderboard': 'Could not open the leaderboard.',
     },
     zh: {
-        'title.name': 'GAME TEMPLATE',
+        'title.name': 'PAPER VEIN',
         'title.tagline': '开始你的新游戏',
         'title.play': '开始',
         'title.ranking': '排行榜',
@@ -49,7 +49,7 @@ export const translations: Record<Locale, Record<string, string>> = {
         'error.leaderboard': '无法打开排行榜。',
     },
     ja: {
-        'title.name': 'GAME TEMPLATE',
+        'title.name': 'PAPER VEIN',
         'title.tagline': '新しいゲームを始めよう',
         'title.play': 'スタート',
         'title.ranking': 'ランキング',

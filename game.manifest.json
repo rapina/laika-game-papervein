@@ -1,12 +1,12 @@
 {
   "schemaVersion": 1,
-  "slug": "gametemplate",
-  "appId": "com.example.gametemplate",
+  "slug": "papervein",
+  "appId": "com.sputnikworkshop.papervein",
   "version": "0.0.1",
   "releaseDate": "TODO-YYYY-MM-DD",
   "title": {
-    "ko": "게임 템플릿",
-    "en": "Game Template"
+    "ko": "종이맥",
+    "en": "Paper Vein"
   },
   "tagline": {
     "ko": "TODO 한 줄 소개",
