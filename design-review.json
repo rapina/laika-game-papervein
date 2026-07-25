@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "reviewedAt": "2026-07-25",
-  "sourceHash": "6ee70486953d1ff8ed1b7f6f268538ea75f1ad5513db0ce92be7032fa5d77b75",
-  "verdict": "blocked",
+  "sourceHash": "af5e433e66853f7fdfdc4dbee902e222358ee6350743ae1e579b9c0d90c0adcb",
+  "verdict": "pass",
   "method": {
     "build": "current main autoplay.html via npm run dev at http://127.0.0.1:4188",
     "inputPath": "pointer-events",
@@ -21,121 +21,128 @@
       {
         "profile": "intuitive",
         "sound": true,
-        "angleRatio": 0.88,
-        "magnitudeRatio": 1.13
+        "angleRatio": 1.26,
+        "magnitudeRatio": 0.67
       },
       {
         "profile": "skilled",
         "sound": true,
-        "angleRatio": 0.89,
-        "magnitudeRatio": 0.87
+        "angleRatio": 1.18,
+        "magnitudeRatio": 1.12
       },
       {
         "profile": "natural-gesture",
         "sound": true,
         "angleRatio": 1.11,
-        "magnitudeRatio": 1.04
+        "magnitudeRatio": 1.1
       }
     ],
-    "renderInspection": "Canvas pixels were read only to locate the visible loose vermilion end, used holes, and bold crease; __gameState was used only to measure outcomes. Pointer actions were rendered-coordinate move/down/move/up events."
+    "renderInspection": "구멍, 느슨한 주홍 실 끝, 준비 문구, 굵은 주름, 위험 이중 외곽선, 비용 숫자는 렌더된 캔버스 좌표와 픽셀에서 읽었다. __gameState는 봉합 수, 시간, 실, 파열, 거부, 결과 측정에만 사용했다. 포인터는 실제 move/down/move/up, 키보드는 네 방향키·Space·M, 재시작은 결과 캔버스 탭과 Space로 실행했다."
   },
   "promises": [
     {
       "id": "p1",
       "source": "GDD.md#콘셉트",
       "claim": "순서와 누적 상태가 남고 한 번 당긴 결과가 종이 전체로 번져 다음 선택을 바꾸는 한 손 건설 게임이다.",
-      "observed": "실제 포인터 순서에 따라 실, 파열, 봉합 수가 달라졌고 봉합선과 주변 틈·주름이 다음 화면에 남았다. 그러나 입력 속도 제한이 없어 인접 구멍을 1→7로 빠르게 잇는 경로가 3.48초, 파열 0회로 즉시 완주해 약속한 누적 건설 리듬과 다음 선택 판단을 사실상 우회했다.",
-      "status": "fatal"
+      "observed": "실제 렌더 좌표 드래그에서 선택 순서가 봉합선, 실 잔량, 파열과 결과를 바꿨다. 화면의 굵은 주름을 따른 3판은 모두 완주했고, 이를 무시해 가장 먼 구멍을 고른 3판은 모두 세 번째 봉합과 세 번째 파열에서 실패했다.",
+      "status": "met"
     },
     {
       "id": "p2",
       "source": "GDD.md#콘셉트",
       "claim": "첫 플레이는 90–105초, 숙련 플레이는 60–80초다.",
-      "observed": "렌더 좌표 입력 9판에서 직관 3판은 3.40–7.47초, 숙련 3판은 4.17–6.37초에 모두 완주했다. 별도 키보드 완주는 2.43초, 인접 포인터 완주는 3.48초였다.",
-      "status": "fatal"
+      "observed": "직관 3판은 68.07–69.18초, 숙련 3판은 68.05–68.42초, 자연 제스처 3판은 68.60–69.63초에 완주했다. 숙련 밴드는 재현됐지만 안내를 읽고 성급한 재시도를 겪은 첫 시도도 90초에 이르지 않아 첫 플레이 밴드는 실기에서 재현되지 않았다.",
+      "status": "gap"
     },
     {
       "id": "p3",
       "source": "GDD.md#한-판",
-      "claim": "느슨한 실 끝을 빈 구멍까지 드래그해 놓고 7개 틈을 봉합하며, 세 번째 파열 또는 실 소진 전에 한 장을 완성한다.",
-      "observed": "실제 포인터 move/down/move/up으로 구멍이 닫히고 실과 봉합 수가 갱신됐다. 7개 봉합은 성공 결과를, 무입력은 25.52초에 세 번째 파열 실패를, 거친 먼 순서는 파열 또는 실 소진 실패를 만들었다.",
+      "claim": "느슨한 실 끝을 빈 구멍까지 드래그해 7개 틈을 봉합하며 세 번째 파열 또는 실 소진 전에 한 장을 완성한다.",
+      "observed": "포인터 인접 경로는 66.88초·파열 0회, 키보드 경로는 66.53초·파열 0회로 7개를 완성했다. 가장 먼 구멍 경로는 19.93–20.43초에 세 번째 파열로 실패했고, 무입력은 25.85초에 세 번째 파열로 실패했다.",
       "status": "met"
     },
     {
       "id": "p4",
       "source": "GDD.md#화면에-보이는-판정-정보",
-      "claim": "첫판 가이드는 실 끝을 빈 구멍에 놓기, 굵은 주름부터, 7개 봉합·파열 3회 전의 세 답을 준다.",
-      "observed": "ko/en 첫 화면에서 세 답이 모두 읽혔고 느슨한 주홍 실 끝, 빈 구멍, 굵기가 다른 주름, 0/7과 0/3 HUD가 동시에 보였다.",
+      "claim": "첫판 가이드는 실 끝을 빈 구멍에 놓기, 느슨해진 뒤 굵은 주름부터, 7개 봉합·파열 3회 전의 세 답을 준다.",
+      "observed": "ko/en 첫 화면에서 세 답이 모두 읽혔다. 봉합 중에는 하단의 초 단위 느슨해짐 문구와 원형 진행이 보였고, 준비 순간에는 느슨해졌다·굵은 주름부터 문구가 굵은 주름과 함께 나타났다.",
       "status": "met"
     },
     {
       "id": "p5",
       "source": "GDD.md#화면에-보이는-판정-정보",
-      "claim": "벌어짐, 장력, 실 잔량, 파열 예산, 사용한 구멍이 판정에 맞는 화면 정보로 보인다.",
-      "observed": "틈 폭, 주름, 실 숫자, 0/3 파열, 주홍 봉합선이 실제 상태 변화와 함께 갱신됐다. 다만 드래그 중 표시되는 예상 비용은 화면상 거리식만 반영하고 실제 비용에 더해지는 대상 장력과 기존 파열 보정은 빠져 있어 표시값이 실제 차감값과 일치하지 않는다.",
-      "status": "gap"
+      "claim": "벌어짐, 장력, 실 잔량, 파열 예산, 사용한 구멍과 정확한 봉합 뒤 실 잔량이 화면 판정 정보로 보인다.",
+      "observed": "틈 폭, 짧은 주름, 상단 실 숫자, 0/3 파열, 주홍 봉합선이 실제 상태와 함께 바뀌었다. 위험한 첫 0→7 드래그를 놓기 전 화면은 실 78.1 남음을 표시했고, hold 중 계산값 78.050056과 drop 시 78.054056은 표시 정밀도에서 일치했다. 커밋 비용 21.945944는 실제 차감량 21.945944와 같았다.",
+      "status": "met"
     },
     {
       "id": "p6",
       "source": "GDD.md#순수-규칙",
       "claim": "위험 봉합은 놓기 전에 대상 틈의 갈라진 이중 외곽선과 진동 무늬로 예고된다.",
-      "observed": "실제 첫 화면과 드래그 전 대상에는 위험 임계치에 따른 이중 외곽선이나 진동 예고가 없었다. 갈라진 외곽선과 짧은 획은 파열이 이미 발생한 뒤에만 나타났다.",
-      "status": "gap"
+      "observed": "첫 0→7 드래그를 대상 위에 유지하자 drop 전에 대상 틈 바깥으로 이중 점선 외곽선과 다섯 개 진동 획이 보였다. 놓은 뒤 같은 대상이 즉시 파열 1회가 됐다.",
+      "status": "met"
     },
     {
       "id": "p7",
       "source": "GDD.md#플레이-가능성-검증",
       "claim": "화면의 굵은 장력 주름을 우선하는 선택이 깊이 축이며 최소 한 경로가 60–80초 안에 완주한다.",
-      "observed": "렌더된 주름을 픽셀로 읽어 고른 직관·숙련 6판은 모두 완주해 주름 선택 경로는 작동했다. 그러나 화면이 가르치지 않는 더 강한 해법은 시간을 두지 않고 인접 구멍을 차례로 잇는 것이며, 이는 3.48초 무파열 완주로 주름 판단과 60–80초 깊이 축을 제거했다.",
-      "status": "fatal"
+      "observed": "내부 장력값 없이 렌더 픽셀의 굵은 주름만 읽은 직관·숙련 6판은 모두 68.05–69.18초에 완주했다. 같은 입력 간격으로 굵은 주름을 무시하고 가장 먼 빈 구멍을 고른 3판은 3/7에서 세 번째 파열로 전부 실패했다.",
+      "status": "met"
     },
     {
       "id": "p8",
       "source": "GDD.md#입력과-수명주기",
-      "claim": "방향키로 빈 구멍을 순환하고 Space로 집기/놓기를 하며 포인터와 같은 선택 판단을 요구한다.",
-      "observed": "렌더된 굵은 주름을 보고 목표를 정한 뒤 방향키로 선택 고리를 이동하고 Space 두 번으로 봉합했다. 7개 선택 후 2.43초에 완주했으며 키보드는 정답을 자동 선택하지 않고 목표 구멍 판단과 순환 입력을 그대로 요구했다.",
+      "claim": "방향키로 빈 구멍을 순환하고 Space로 집기/놓기를 하며 포인터와 같은 선택 판단을 요구하고 M으로 음소거한다.",
+      "observed": "좌·우·상·하 방향키를 각각 눌러 선택 고리를 이동·복귀시키고 Space 두 번으로 각 봉합을 실행해 66.53초·파열 0회로 완주했다. 키보드는 정답을 자동 선택하지 않았다. M을 두 번 눌렀을 때 음소거 상태가 true와 false로 바뀌었다.",
       "status": "met"
     },
     {
       "id": "p9",
       "source": "GDD.md#한-판",
       "claim": "결과는 700ms 보호 뒤 화면 탭 또는 Space로 다시 시작한다.",
-      "observed": "성공 결과 뒤 800ms를 기다려 실제 캔버스를 탭하자 closedCount 0, thread 100의 새 판이 시작됐다. 별도 키보드 성공 결과에서도 Space로 같은 초기 상태가 복구됐다.",
+      "observed": "포인터와 키보드 성공 결과 직후 각각 탭과 Space를 넣었을 때 결과 상태가 유지됐다. 보호 시간이 지난 뒤 같은 입력을 다시 넣자 두 경로 모두 0/7, 실 100, 파열 0의 새 판으로 복원됐다.",
       "status": "met"
     },
     {
       "id": "p10",
       "source": "GDD.md#아트와-반응",
-      "claim": "종이와 젖은 섬유의 재료감, 봉합과 파열의 비색상 반응, 들린 종이와 역광의 완성 장면이 나타난다.",
-      "observed": "실제 화면에는 반복 종이 섬유 질감, 이중 굵기의 주홍 섬유, 찢어진 검은 틈, 봉합선, 파열 뒤 비대칭 갈라짐과 짧은 획이 보였다. 성공 결과 뒤 종이가 약간 위로 들리고 가장자리에 역광이 생겼지만 84% 불투명 결과 패널이 중앙의 종이결과 잎맥 봉합 대부분을 가려 대표 완성 장면의 재료 반응이 약해졌다.",
-      "status": "gap"
+      "claim": "종이와 젖은 섬유의 재료감, 봉합과 파열의 비색상 반응, 들린 종이와 역광의 완성 장면이 나타나며 성공 정보 띠가 잎맥을 가리지 않는다.",
+      "observed": "실제 화면에서 섬유가 드러난 종이 질감, 이중 굵기 주홍 실, 찢어진 틈, 파열 외곽 떨림을 확인했다. 성공 때 종이가 위로 들리고 우측과 하단 역광이 비쳤다. 결과 정보는 하단 137px의 58% 반투명 띠에 머물렀고 중앙 종이결과 봉합 5개는 방해받지 않았으며 마지막 두 봉합선도 띠 뒤로 계속 식별됐다.",
+      "status": "met"
     },
     {
       "id": "p11",
       "source": "GDD.md#화면에-보이는-판정-정보",
       "claim": "결과 화면은 성공/실패 제목, 재시작 안내, 다음 판에서 먼저 당길 구체적인 구멍을 보여 준다.",
-      "observed": "성공은 한 장이 되었다, 실패는 종이가 갈라졌다로 종료를 알렸고 화면을 탭해 다시 수선과 구체적인 N번 구멍 교정이 보였다. 먼 순서 실패에서 5번 구멍 교정을 읽고 다음 판의 첫 선택을 5로 바꾸자 7/7, 파열 0회로 회복했다.",
+      "observed": "성공과 실패 제목, 화면을 탭해 다시 수선, 구체적인 번호가 실제 결과판에 보였다. 무입력 실패 결과의 3번 구멍부터 당겨 보기를 읽어 다음 판 첫 포인터 목표를 3번으로 바꾸고 이후 굵은 주름을 따르자 67.92초·파열 0회로 완주했다.",
       "status": "met"
     },
     {
       "id": "p12",
       "source": "GDD.md#입력과-수명주기",
-      "claim": "ko/en은 같은 기능과 정보를 제공하고 캔버스는 DPR에 맞으며 개발용 표시가 없다.",
-      "observed": "ko/en 첫 화면은 동일한 HUD와 세 답, 언어·소리 조작을 제공했다. DPR 3에서 CSS 390×844와 backing 1170×2532가 일치했다. 배열 인덱스, 좌표, FPS, 내부 상태, 바운딩 박스는 화면에 없었다.",
+      "claim": "ko/en은 같은 기능과 정보를 제공하며 전환 중 규칙 상태를 보존하고 개발용 표시가 없다.",
+      "observed": "실제 언어 버튼으로 ko에서 en으로 바꿔도 경과와 0/7 상태가 보존됐고 HUD, 세 답, 언어·소리 조작이 같은 위치와 기능으로 유지됐다. 배열 인덱스, 좌표, FPS, 내부 상태, 바운딩 박스는 화면에 없었다.",
       "status": "met"
     },
     {
       "id": "p13",
       "source": "GDD.md#한-판",
       "claim": "시작 입력 전에는 소리가 나지 않고 소리는 사용자 입력 뒤에 시작한다.",
-      "observed": "AudioContext 생성 횟수는 첫 입력 전 0, 실제 캔버스 포인터 입력 뒤 1이었다.",
+      "observed": "추적한 AudioContext 생성 횟수는 첫 입력 전 0이었고 실제 캔버스 포인터 입력 뒤 1이 됐다.",
       "status": "met"
     },
     {
       "id": "p14",
       "source": "GDD.md#목표-화면-대조",
-      "claim": "design/targets의 종이·섬유·틈·봉합·파열·결과 정보 수준과 실제 화면이 같은 게임이며 기록된 의도적 차이만 허용한다.",
-      "observed": "목표와 실제 모두 종이 섬유, 주홍 한 가닥, 눌린 구멍, 검은 틈, 상단 자원 정보를 유지했다. 실제는 단일 지그재그 종이 메시와 누적 봉합 경로를 사용하며 이 차이는 DAY.md 목표 화면 대조에 기록돼 있다.",
+      "claim": "design/targets의 종이·섬유·틈·봉합·파열·결과 정보 수준과 실제 화면이 같은 게임이다.",
+      "observed": "목표와 실제 화면 모두 두꺼운 종이 섬유, 주홍 한 가닥, 눌린 구멍, 검은 틈, 장력 주름, 상단 자원, 봉합·파열·역광 결과를 유지했다. 실제 배치는 세로 지그재그 한 장으로 단순화됐지만 재료, 반응, 판정 정보와 한 가닥 건설 문법은 목표와 동일했다.",
+      "status": "met"
+    },
+    {
+      "id": "p15",
+      "source": "GDD.md#한-판",
+      "claim": "각 봉합 뒤 9초 안정화 동안 다음 봉합을 받지 않고 반동과 아직 팽팽하다를 보여 준 뒤 준비 신호가 나와야 한다.",
+      "observed": "첫 봉합 직후 2–7번으로 빠르게 이어 간 포인터 드래그 6회가 모두 거부돼 1/7에 머물렀다. 안정화 잔여 0.100초 시점의 인접 드래그도 반동·아직 팽팽하다와 함께 거부됐고, 원형 진행이 끝나 준비 문구가 나타난 뒤 같은 드래그가 2/7로 수락됐다. 자연 제스처 3판도 성급한 입력 5/6/6회를 거부당한 뒤 모두 완주했다.",
       "status": "met"
     }
   ],
@@ -144,42 +151,50 @@
       "profile": "intuitive",
       "runs": 3,
       "completions": 3,
-      "note": "렌더된 굵은 주름을 따르고 N(8°, 15%) 포인터 오차를 적용했다. 8/8/10입력, 3.40–7.47초, 남은 실 13.10–28.80, 파열 0/1/1."
+      "note": "안내를 읽고 첫 안전 행동 뒤 렌더된 굵은 주름을 따라 N(8°, 15%) 포인터 오차로 플레이했다. 68.07–69.18초, 파열 1/1/1, 남은 실 39.63–44.52."
     },
     {
       "profile": "skilled",
       "runs": 3,
       "completions": 3,
-      "note": "같은 화면 판단에 N(4°, 7.5%) 오차를 적용했다. 8/8/19입력, 4.17–6.37초, 남은 실 14.76–29.37, 파열 0/1/2."
+      "note": "준비 신호와 렌더된 굵은 주름을 따라 N(4°, 7.5%) 포인터 오차로 플레이했다. 68.05–68.42초, 파열 1/0/1, 남은 실 23.11–44.36."
     },
     {
       "profile": "natural-gesture",
       "runs": 3,
+      "completions": 3,
+      "note": "안내 해법을 주입하지 않고 가까운 빈 구멍으로 평범한 스와이프와 성급한 재시도를 했다. 아직 팽팽하다를 본 뒤 준비까지 기다려 회복했으며 68.60–69.63초, 파열 1/1/1, 거부 입력 5/6/6회였다."
+    },
+    {
+      "profile": "farthest-ignore-crease",
+      "runs": 3,
       "completions": 0,
-      "note": "안내를 정독하지 않고 긴 관성 드래그를 우선했다. 두 판은 6/7에서 실 소진 또는 세 번째 파열로 실패했고 한 판은 24입력 뒤 4/7에서 미종료했다. 별도 실패 결과의 5번 구멍 교정을 다음 판 첫 선택에 적용한 뒤에는 7/7, 파열 0회로 회복했다."
+      "note": "굵은 주름을 의도적으로 무시하고 가장 먼 빈 구멍을 고른 실제 포인터 경로는 19.93–20.43초, 3/7, 파열 3회로 모두 실패했다."
+    },
+    {
+      "profile": "screen-correction-recovery",
+      "runs": 1,
+      "completions": 1,
+      "note": "무입력 실패 결과판의 3번 구멍 교정을 다음 판 첫 입력에 적용하고 이후 렌더된 굵은 주름을 따라 67.92초, 파열 0회로 완주했다."
     }
   ],
   "strategyLegibility": {
-    "winningStrategy": "마르기 전에 가까운 빈 구멍을 차례로 빠르게 봉합해 먼 당김의 장력·실 비용을 피한다.",
-    "taughtOnScreen": false,
-    "taughtBy": "",
-    "learnedFrom": "experiment"
+    "winningStrategy": "실이 느슨해질 때까지 기다린 뒤 굵은 주름의 빈 구멍부터 봉합하고, 놓기 전 위험 외곽선이 뜨는 먼 당김은 피한다.",
+    "taughtOnScreen": true,
+    "taughtBy": "첫판 가이드의 실이 느슨해진 뒤 굵은 주름부터, 9→1초 안정화 문구와 원형 진행, 느슨해졌다 준비 문구, 굵은 삼중 주름, drop 전 위험 이중 외곽선과 정확한 실 잔량",
+    "learnedFrom": "screen"
   },
   "gradeLadder": {
     "present": false
   },
   "idleRun": {
     "ran": true,
-    "survivedFraction": 0.232,
-    "note": "무입력 실제 브라우저 세션은 입력 없이 25.52초에 파열 3회, closedCount 0으로 실패 결과에 도달했다. 정밀 판정이나 봉합은 얻지 못했다."
+    "survivedFraction": 0.235,
+    "note": "무입력 실제 브라우저 세션은 입력 없이 25.85초에 세 번째 파열, 0/7로 실패 결과에 도달했다. 봉합이나 정밀 판정은 얻지 못했다."
   },
-  "fatalGaps": [
-    "입력 속도 제한이 없어 1→7 인접 봉합이 3.48초 무파열 완주를 만들며 누적 건설과 다음 선택 판단을 우회한다.",
-    "첫판·숙련 실기 완주가 2.43–7.47초로 GDD의 60–105초 세션 약속과 일치하지 않는다.",
-    "화면은 굵은 주름 우선을 가르치지만 실제 지배 전략인 빠른 인접 봉합을 가르치지 않으며, 이 우회 전략이 GDD의 깊이 축을 제거한다."
-  ],
+  "fatalGaps": [],
   "summary": {
-    "ko": "포인터·키보드·재시작, 무입력, ko/en, 재료와 결과 반응은 실제 화면에서 작동했다. 그러나 빠른 인접 봉합이 2.43–7.47초에 판을 끝내 60–105초 건설 리듬과 굵은 주름 선택 깊이를 우회한다. 위험 예고와 비용 미리보기에도 화면-판정 불일치가 있어 공개를 차단한다.",
-    "en": "Pointer, keyboard, restart, idle failure, ko/en parity, materials, and result feedback worked in the rendered build. However, rapid adjacent stitches ended runs in 2.43–7.47 seconds, bypassing the promised 60–105 second construction rhythm and bold-crease decision depth. Risk warning and cost-preview information also diverged from the judgment rules, so publication is blocked."
+    "ko": "9초 안정화가 빠른 인접 봉합 우회를 실제로 막았고 준비 신호·굵은 주름·위험 외곽선·정확한 비용·반투명 결과 띠가 렌더 화면에서 읽혔다. 직관·숙련·자연 제스처 9판은 모두 약 68–70초에 완주했고, 굵은 주름을 무시한 3판은 모두 세 번째 파열로 실패했다. 치명적 결함은 없으나 첫 플레이 90–105초 밴드는 실기에서 재현되지 않아 비차단 gap으로 남긴다.",
+    "en": "The nine-second stabilization blocked rapid adjacent-stitch bypasses, while the ready cue, bold crease, pre-drop risk outline, exact cost preview, and translucent result band were legible in the rendered build. All nine intuitive, skilled, and natural-gesture runs completed in about 68–70 seconds; all three runs that ignored the bold crease failed on the third rupture. No fatal gap remains, but the promised 90–105 second first-play band was not reproduced and remains a non-blocking gap."
   }
 }
