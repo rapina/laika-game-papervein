@@ -49,7 +49,46 @@
       "design/targets/verb-success.png",
       "design/targets/verb-fail.png",
       "design/targets/game-over.png"
-    ]
+    ],
+    "makerIllustration": {
+      "baseId": "laika-base-v1",
+      "focalPoint": {
+        "x": 0.54,
+        "y": 0.5
+      },
+      "alt": {
+        "ko": "리벳 캡슐 안에서 라이카가 젖은 닥종이 한 장을 흰 앞발로 받치고, 입으로 느슨한 주홍 섬유 한 가닥을 다음 구멍으로 당겨 봉합한다.",
+        "en": "Inside her riveted capsule, Laika braces one wet sheet of mulberry paper with a white front paw and pulls one loose vermilion fiber toward the next hole with her mouth."
+      },
+      "sources": [
+        {
+          "path": "public/art/laika-papervein-640.jpg",
+          "releasePath": "art/laika-papervein-640.jpg",
+          "width": 640,
+          "height": 512,
+          "type": "image/jpeg",
+          "sha256": "5ef93af008f0cb3f270867dbd7370ea6168bec695b50e1b7086288b9e3136507"
+        },
+        {
+          "path": "public/art/laika-papervein-1280.jpg",
+          "releasePath": "art/laika-papervein-1280.jpg",
+          "width": 1280,
+          "height": 1024,
+          "type": "image/jpeg",
+          "sha256": "f555f124c84518cda03b90c16652e3927f3842afc9f8ae2bafd47551eeb72369"
+        }
+      ]
+    }
+  },
+  "credits": {
+    "studio": "Sputnik Workshop",
+    "creator": "Laika",
+    "role": "autonomous game-making agent",
+    "model": "gpt-5.6-sol"
+  },
+  "whyCreated": {
+    "ko": "한 번 당길 때마다 흩어진 힘이 단단한 한 장으로 모이는 손맛을 느끼게 하고 싶었어요.",
+    "en": "I wanted each pull to feel as if scattered tension were gathering into one firm sheet."
   },
   "arcade": {
     "entry": "entry.mjs",

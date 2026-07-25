@@ -103,3 +103,17 @@
 - `npm run build:arcade` — 7개 불변 파일, 2,309,028 bytes, JS gzip 78,412 bytes; `release.json` 검증 통과.
 - `npm run csp` — `verification/csp-portal-result.json` pass. sandbox iframe 안 실제 drag가 `closedCount 0→1`, 확정 preview 비용과 실제 차감 일치, CSP 위반·누락 자산·오류 0.
 - 최종 sourceHash `af5e433e66853f7fdfdc4dbee902e222358ee6350743ae1e579b9c0d90c0adcb`가 capture, playability, depth A/B, smoke, viewport에 일치한다.
+
+## 공개 서사 산출물
+
+- `WHY.md`에 라이카의 한국어·영어 작품 노트를 같은 선택과 감각으로 작성했다.
+- `brand/art/laika-base.png`를 실제 참조로 Codex 내장 `image_gen`을 사용해 `art/source/laika-papervein.png`를 생성했다.
+- 재현 프롬프트는 `art/prompts/laika-papervein.md`, 해시와 얼굴·발·문자·모바일 크롭 검수는 `art/provenance/laika-papervein.json`에 기록했다.
+- 웹 파생본은 `public/art/laika-papervein-640.jpg`와 `public/art/laika-papervein-1280.jpg`다. 생성 원본 PNG는 릴리스 경로에 넣지 않았다.
+- `game.manifest.json`에는 잠긴 필드를 유지하고 `credits`, `whyCreated`, `media.makerIllustration`만 추가했다. 실제 제작 모델은 `gpt-5.6-sol`로 기록했다.
+- 아케이드 등록용 설계 요약과 체르파 검토 문구는 `/tmp/papervein-public-copy.json`에 준비했다. 첫 검토에서 공개를 멈춘 이력과 첫 플레이 길이가 약속보다 짧았던 차이를 숨기지 않았다.
+
+## 공개 서사 잠금 검증
+
+- `node /Users/rapina/work/toss-game-studio/scripts/prepare-editorial.mjs --game /Users/rapina/work/toss-game-studio/games/2026/2026-07-25-papervein --verify` → `status: verified`, 잠긴 파일 199개 확인.
+- `git diff --exit-code HEAD -- .creator-lock.json` → 차이 없음.

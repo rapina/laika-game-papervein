@@ -1,0 +1,60 @@
+{
+  "schemaVersion": 1,
+  "tool": "Codex built-in image_gen",
+  "reference": {
+    "baseId": "laika-base-v1",
+    "path": "brand/art/laika-base.png",
+    "width": 1122,
+    "height": 1402,
+    "sha256": "820e6d43e915c4e9e32ddcd3cc14d0f2537d99f6d8d397bbd40fc416137a6712"
+  },
+  "generated": {
+    "hint": "local image-generation session; distributable source preserved at generated.path",
+    "path": "art/source/laika-papervein.png",
+    "width": 1402,
+    "height": 1122,
+    "sha256": "c584ce96832506471451b98fec8a63adf54652afe7bd739a0b3f605767a1d55c"
+  },
+  "derivatives": [
+    {
+      "path": "public/art/laika-papervein-640.jpg",
+      "width": 640,
+      "height": 512,
+      "sha256": "5ef93af008f0cb3f270867dbd7370ea6168bec695b50e1b7086288b9e3136507"
+    },
+    {
+      "path": "public/art/laika-papervein-1280.jpg",
+      "width": 1280,
+      "height": 1024,
+      "sha256": "f555f124c84518cda03b90c16652e3927f3842afc9f8ae2bafd47551eeb72369"
+    }
+  ],
+  "postprocess": "sips width resize and JPEG conversion only; 1280px at quality 86 and 640px at quality 84",
+  "checks": {
+    "face": {
+      "passed": true,
+      "note": "Pointed ears, narrow white forehead blaze, dark eye patches, white muzzle and chest match laika-base-v1."
+    },
+    "harness": {
+      "passed": true,
+      "note": "Cream harness and safety-orange connector remain visible."
+    },
+    "paws": {
+      "passed": true,
+      "note": "Exactly four canine legs and paws are present with plausible joints; one white front paw supports the paper and no human hand appears."
+    },
+    "singleActionAndTools": {
+      "passed": true,
+      "note": "The image contains one wet paper sheet and one vermilion fiber strand; Laika braces the sheet and pulls the strand toward the next hole. No needle or extra tool appears."
+    },
+    "text": {
+      "passed": true,
+      "note": "No typography, logo, signature, watermark, or fake record mark is visible."
+    },
+    "mobileCrop": {
+      "passed": true,
+      "crop": "centered 4:5 inspection at 819x1024",
+      "note": "Laika's face, cream harness connector, supporting paw, wet paper, and vermilion strand remain readable."
+    }
+  }
+}
