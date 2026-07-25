@@ -3,34 +3,34 @@
   "slug": "papervein",
   "appId": "com.sputnikworkshop.papervein",
   "version": "0.0.1",
-  "releaseDate": "TODO-YYYY-MM-DD",
+  "releaseDate": "2026-07-25",
   "title": {
     "ko": "종이맥",
     "en": "Paper Vein"
   },
   "tagline": {
-    "ko": "TODO 한 줄 소개",
-    "en": "TODO one line pitch"
+    "ko": "벌어지는 종이를 한 가닥의 섬유로 꿰맨다.",
+    "en": "Bind an opening sheet with a single strand."
   },
   "description": {
-    "ko": "TODO 규칙과 목표, 실패 조건을 중립 문체로 적는다.",
-    "en": "TODO describe the rules, the goal, and the failure condition in neutral prose."
+    "ko": "느슨한 실 끝을 빈 구멍까지 당겨 7개 틈을 닫는다. 먼 봉합은 여러 틈을 당기지만 실과 장력을 더 쓴다. 세 번째 파열 또는 실 소진 전에 한 장을 완성한다.",
+    "en": "Pull the loose end to empty holes and close seven gaps. Long stitches draw several gaps but spend more thread and tension. Complete the sheet before the third rupture or the thread runs out."
   },
   "controls": {
     "ko": {
-      "primary": "TODO 주 입력이 무엇을 하는지",
-      "keyboard": "TODO 키보드 대체 입력",
+      "primary": "느슨한 실 끝을 빈 구멍까지 드래그해 놓는다.",
+      "keyboard": "방향키로 구멍을 고르고 Space로 집고 놓는다.",
       "restart": "결과 화면을 눌러 다시 시작한다."
     },
     "en": {
-      "primary": "TODO what the primary input does",
-      "keyboard": "TODO keyboard alternative",
+      "primary": "Drag the loose end to an empty hole and release.",
+      "keyboard": "Choose a hole with the arrow keys; press Space to pick up and release.",
       "restart": "Tap the result screen to start again."
     }
   },
   "session": {
     "typicalSeconds": 90,
-    "maxSeconds": 180,
+    "maxSeconds": 110,
     "failureBudget": 3
   },
   "display": {
@@ -41,10 +41,15 @@
   },
   "supportedLocales": ["ko", "en"],
   "media": {
-    "titleKeyImage": "public/art/title-key.jpg",
-    "visualMedium": "TODO 시각 매체",
+    "titleKeyImage": "public/assets/title-key.png",
+    "visualMedium": "scanned raster paper and fiber fragments composited with procedural 2D deformation",
     "audio": "synthesized WebAudio only, no audio files",
-    "screenshots": []
+    "screenshots": [
+      "design/targets/first-play.png",
+      "design/targets/verb-success.png",
+      "design/targets/verb-fail.png",
+      "design/targets/game-over.png"
+    ]
   },
   "arcade": {
     "entry": "entry.mjs",
@@ -57,10 +62,12 @@
     "assets": [
       { "source": "public/fonts/Galmuri11.woff2", "releasePath": "fonts/Galmuri11.woff2" },
       { "source": "public/fonts/Galmuri11-Bold.woff2", "releasePath": "fonts/Galmuri11-Bold.woff2" },
-      { "source": "public/fonts/Galmuri14.woff2", "releasePath": "fonts/Galmuri14.woff2" }
+      { "source": "public/fonts/Galmuri14.woff2", "releasePath": "fonts/Galmuri14.woff2" },
+      { "source": "public/assets/paper-fiber.png", "releasePath": "assets/paper-fiber.png" },
+      { "source": "public/assets/wet-fiber.png", "releasePath": "assets/wet-fiber.png" }
     ]
   },
   "source": {
-    "launchpadCommit": "TODO-launchpad-sha"
+    "launchpadCommit": "local-template-2026-07-25"
   }
 }

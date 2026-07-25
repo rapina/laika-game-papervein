@@ -29,17 +29,17 @@
 
 /* ======= Theme Tokens — restyle per game ======= */
 :root {
-    --bg: #0c1824;
-    --bg-deep: #060e18;
-    --panel: #121e2e;
-    --panel-light: #1a2a3c;
-    --border-line: #1e3048;
-    --accent: #d4a830;
-    --accent-dim: rgba(212, 168, 48, 0.15);
-    --danger: #ff4438;
-    --text: #d0d8e0;
-    --text-dim: #7a8a9a;
-    --radius: 6px;
+    --bg: #221b15;
+    --bg-deep: #100d0a;
+    --panel: #35291f;
+    --panel-light: #493725;
+    --border-line: #796046;
+    --accent: #e64b32;
+    --accent-dim: rgba(230, 75, 50, 0.15);
+    --danger: #e64b32;
+    --text: #f0e4cd;
+    --text-dim: #c4b398;
+    --radius: 2px;
 }
 
 html, body, #root {
@@ -150,16 +150,34 @@ html, body, #root {
 
 .title-screen {
     justify-content: center;
-    gap: 48px;
+    gap: 40px;
+    background: #120e0a;
+}
+.title-key,
+.title-shade {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+}
+.title-key {
+    object-fit: cover;
+}
+.title-shade {
+    background: linear-gradient(180deg, rgba(8, 6, 4, .15), rgba(8, 6, 4, .72) 64%, rgba(8, 6, 4, .92));
 }
 .title-logo {
+    position: relative;
+    z-index: 1;
+    margin-top: 330px;
     text-align: center;
 }
 .title-logo h1 {
     font-family: 'Galmuri14', monospace;
-    font-size: 34px;
-    letter-spacing: 2px;
-    color: var(--accent);
+    font-size: 38px;
+    letter-spacing: 5px;
+    color: #f2e5cb;
+    text-shadow: 0 2px 10px #000;
 }
 .title-tagline {
     margin-top: 10px;
@@ -167,6 +185,8 @@ html, body, #root {
     color: var(--text-dim);
 }
 .title-menu {
+    position: relative;
+    z-index: 1;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -180,6 +200,7 @@ html, body, #root {
     bottom: 12px;
     font-size: 11px;
     color: var(--text-dim);
+    z-index: 1;
 }
 
 /* ======= Game ======= */
@@ -188,6 +209,7 @@ html, body, #root {
     overflow: hidden;
 }
 .game-host {
+    position: relative;
     width: 100%;
     flex: 1;
     min-height: 0;
@@ -198,6 +220,21 @@ html, body, #root {
 .game-host canvas {
     display: block;
 }
+.game-tool {
+    position: absolute;
+    z-index: 3;
+    top: 112px;
+    border: 1px solid rgba(239, 229, 207, .38);
+    background: rgba(38, 31, 25, .7);
+    color: #efe5cf;
+    min-width: 44px;
+    min-height: 44px;
+    padding: 6px 9px;
+    cursor: pointer;
+}
+.game-lang { right: 10px; }
+.game-mute { left: 10px; }
+.game-tool[data-muted="true"] { text-decoration: line-through; opacity: .62; }
 .game-exit-btn {
     position: absolute;
     top: calc(env(safe-area-inset-top, 0px) + 10px);

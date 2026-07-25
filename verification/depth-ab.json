@@ -1,0 +1,141 @@
+{
+  "pass": true,
+  "sourceHash": "6ee70486953d1ff8ed1b7f6f268538ea75f1ad5513db0ce92be7032fa5d77b75",
+  "tickSeconds": 0.016666666666666666,
+  "actionIntervalSeconds": 9,
+  "sameSeeds": 500,
+  "axis": "follow the rendered bold crease instead of choosing the farthest unmarked hole",
+  "guided": {
+    "runs": 500,
+    "completionRate": 1,
+    "meanThread": 37.448,
+    "meanRuptures": 1.936,
+    "scoreMedian": 71643,
+    "meanElapsed": 63.001
+  },
+  "ignoringCrease": {
+    "runs": 500,
+    "completionRate": 0,
+    "meanThread": 1.872,
+    "meanRuptures": 2.046,
+    "scoreMedian": 57937,
+    "meanElapsed": 61.345
+  },
+  "completionAdvantagePercentagePoints": 100,
+  "representative": {
+    "guidedOrder": [
+      1,
+      2,
+      3,
+      7,
+      6,
+      5,
+      4
+    ],
+    "guidedResult": {
+      "openness": [
+        0.1448,
+        0.134,
+        0.1232,
+        0.08,
+        0.0908,
+        0.1016,
+        0.6524
+      ],
+      "tensions": [
+        0.025,
+        0.025,
+        0.025,
+        0.205,
+        0.162167,
+        0.173,
+        0.218
+      ],
+      "stitched": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "ruptureByGap": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        2
+      ],
+      "maxOpenness": 0.6524,
+      "highestTensionGap": 0,
+      "suggestedHole": 1,
+      "score": 71644,
+      "thread": 37.065332,
+      "ruptures": 2,
+      "closedCount": 7,
+      "elapsed": 63.00126,
+      "over": true,
+      "outcome": "complete"
+    },
+    "ignoringOrder": [
+      7,
+      1,
+      6,
+      2,
+      5,
+      3,
+      4
+    ],
+    "ignoringResult": {
+      "openness": [
+        0.134,
+        0.1124,
+        0.0908,
+        0.228846,
+        0.1016,
+        0.6632,
+        0.6848
+      ],
+      "tensions": [
+        0.446,
+        0.516833,
+        0.47825,
+        0.26975,
+        0.538167,
+        0.164,
+        0.056
+      ],
+      "stitched": [
+        true,
+        true,
+        true,
+        false,
+        true,
+        true,
+        true
+      ],
+      "ruptureByGap": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1
+      ],
+      "maxOpenness": 0.6848,
+      "highestTensionGap": 3,
+      "suggestedHole": 4,
+      "score": 57937,
+      "thread": 0,
+      "ruptures": 2,
+      "closedCount": 6,
+      "elapsed": 63.00126,
+      "over": true,
+      "outcome": "failed"
+    }
+  }
+}

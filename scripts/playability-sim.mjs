@@ -165,15 +165,125 @@ export function writeResult(gameRoot, body) {
 // 뷰포트 게이트가 자리표시 게임에서 실패하는 것과 같은 뜻이다 — 게이트
 // 고장이 아니라 아직 게임이 없다는 뜻이니, 게이트를 끄지 말고 게임을 채운다.
 
+import { createState, renderModel, step, TICK_SECONDS } from '../src/game/papervein/rules.mjs'
+
+const available = (state) => Array.from({ length: 7 }, (_, i) => i + 1)
+    .filter((hole) => !state.stitched[hole - 1])
+
+function nearest(state, targets) {
+    return [...targets].sort((a, b) => Math.abs(state.endpoint - a) - Math.abs(state.endpoint - b))[0]
+}
+
+function chooseGuided(state, targets) {
+    if (state.closedCount === 0) return nearest(state, targets)
+    const suggested = renderModel(state).suggestedHole
+    return targets.includes(suggested) ? suggested : nearest(state, targets)
+}
+
+function chooseIgnoringCrease(state, targets) {
+    return [...targets].sort((a, b) => Math.abs(state.endpoint - b) - Math.abs(state.endpoint - a))[0]
+}
+
+function run(seed, choose, actionEvery = 9) {
+    let state = createState(seed)
+    let nextAction = actionEvery
+    const order = []
+    while (!state.over && state.elapsed < 110) {
+        if (state.elapsed >= nextAction) {
+            const targets = available(state)
+            if (!targets.length) break
+            const target = choose(state, targets)
+            order.push(target)
+            state = step(state, { type: 'stitch', target })
+            nextAction += actionEvery
+        } else {
+            state = step(state)
+        }
+    }
+    return { state, model: renderModel(state), order }
+}
+
+function summarize(runs) {
+    const scores = runs.map((run) => run.model.score).sort((a, b) => a - b)
+    return {
+        runs: runs.length,
+        completionRate: runs.filter((run) => run.state.outcome === 'complete').length / runs.length,
+        meanThread: +(runs.reduce((sum, run) => sum + run.state.thread, 0) / runs.length).toFixed(3),
+        meanRuptures: +(runs.reduce((sum, run) => sum + run.state.ruptures, 0) / runs.length).toFixed(3),
+        scoreMedian: scores[Math.floor(scores.length / 2)],
+        meanElapsed: +(runs.reduce((sum, run) => sum + run.state.elapsed, 0) / runs.length).toFixed(3),
+    }
+}
+
+function idleBaseline(seed = 7) {
+    let state = createState(seed)
+    while (!state.over && state.elapsed < 110) state = step(state)
+    return {
+        firstRuptureSeconds: state.firstRuptureAt,
+        terminalSeconds: state.elapsed,
+        ruptures: state.ruptures,
+        outcome: state.outcome,
+    }
+}
+
 function main() {
-    console.error(
-        [
-            'playability-sim: 어댑터가 채워지지 않았습니다.',
-            '이 파일 하단의 ADAPTER 절을 이 게임의 규칙 모듈로 채우고,',
-            'evaluateGates + writeResult로 결과를 verification/playability-result.json에 쓰세요.',
-        ].join('\n'),
-    )
-    process.exit(1)
+    const requested = Number(process.argv[2] || 500)
+    const runs = Math.max(500, Number.isFinite(requested) ? Math.floor(requested) : 500)
+    const guidedRuns = []
+    const ignoreRuns = []
+    for (let i = 0; i < runs; i += 1) {
+        guidedRuns.push(run(20_260_725 + i, chooseGuided))
+        ignoreRuns.push(run(20_260_725 + i, chooseIgnoringCrease))
+    }
+    const guided = summarize(guidedRuns)
+    const ignoringCrease = summarize(ignoreRuns)
+    const initial = createState(91)
+    const nearChoice = step(initial, { type: 'stitch', target: 1 })
+    const farChoice = step(initial, { type: 'stitch', target: 7 })
+    const signatures = new Set([
+        `${nearChoice.thread}|${nearChoice.ruptures}|${nearChoice.outcome}`,
+        `${farChoice.thread}|${farChoice.ruptures}|${farChoice.outcome}`,
+        `${guidedRuns[0].state.thread}|${guidedRuns[0].state.ruptures}|${guidedRuns[0].state.outcome}`,
+    ])
+    const evidence = {
+        meaningfulActions: 7,
+        distinctOutcomes: signatures.size,
+        resetWorks: JSON.stringify(createState(44)) === JSON.stringify(step(run(44, chooseGuided).state, { type: 'restart' })),
+        reachableGoal: guided.completionRate > 0,
+        choiceChangesState: nearChoice.thread !== farChoice.thread
+            && JSON.stringify(nearChoice.tension) !== JSON.stringify(farChoice.tension),
+    }
+    const gate = evaluateGates({ profile: 'construction', evidence })
+    const depthAdvantagePoints = +((guided.completionRate - ignoringCrease.completionRate) * 100).toFixed(1)
+    const body = {
+        profile: 'construction',
+        pass: gate.pass && depthAdvantagePoints >= 25,
+        failedGates: [...gate.failedGates, ...(depthAdvantagePoints >= 25 ? [] : ['depthAxisNotMaterial'])],
+        tickSeconds: TICK_SECONDS,
+        actionIntervalSeconds: 9,
+        evidence,
+        guided,
+        ignoringCrease,
+        depthAB: {
+            sameSeeds: runs,
+            completionAdvantagePercentagePoints: depthAdvantagePoints,
+            axis: 'follow the rendered bold crease instead of choosing the farthest unmarked hole',
+        },
+        representative: {
+            guidedOrder: guidedRuns[0].order,
+            guidedResult: guidedRuns[0].model,
+            ignoringOrder: ignoreRuns[0].order,
+            ignoringResult: ignoreRuns[0].model,
+        },
+        idle: idleBaseline(),
+        limitations: [
+            'The construction simulation models one action every nine seconds; it does not model pointer aiming error.',
+            'Decorative fiber flutter and paper micro-shake are intentionally outside the deterministic step.',
+        ],
+    }
+    const written = writeResult('.', body)
+    console.log(JSON.stringify({ ...body, sourceHash: written.sourceHash }, null, 2))
+    if (!body.pass) process.exit(1)
 }
 
 if (fileURLToPath(import.meta.url) === process.argv[1]) main()

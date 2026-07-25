@@ -3,7 +3,7 @@
 // 로컬 단독 실행은 CSP가 없어 멀쩡하므로, 게임 쪽 검증이 전부 초록인 채로 공개된다.
 // maejil·violet·grainsplit·repose에서 네 번 되풀이된 뒤 템플릿으로 올렸다.
 import 'pixi.js/unsafe-eval'
-import { SampleGame } from './game/SampleGame'
+import { PaperVeinGame } from './game/PaperVeinGame'
 import { STORAGE_PREFIX } from './appConfig'
 import './index.css'
 
@@ -42,7 +42,9 @@ export function mountGame(options: Options) {
     host.className = 'game-host'
     shell.appendChild(host)
     options.root.appendChild(shell)
-    const game = new SampleGame()
+    const runtimeAssetBase = options.assetBaseUrl === '/' ? new URL('./', import.meta.url).href : options.assetBaseUrl
+    const game = new PaperVeinGame(runtimeAssetBase)
+    game.setLocale(options.locale ?? 'ko')
     void game.mount(host, {
         onGameOver: (result) => emit('ended', { runId: String(run), result }),
     }).then(() => {

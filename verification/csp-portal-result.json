@@ -1,0 +1,103 @@
+{
+  "csp": "default-src 'self'; base-uri 'none'; form-action 'none'; object-src 'none'; frame-ancestors 'self'; frame-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data: https://*.public.blob.vercel-storage.com; media-src 'self' blob: https://*.public.blob.vercel-storage.com; connect-src 'self' https://*.public.blob.vercel-storage.com https://mbxkrnydkgjxhoqtuvsv.supabase.co; font-src 'self'; worker-src 'self' blob:",
+  "style": "assets/style-jgtcBYQu.css",
+  "entry": "entry.mjs",
+  "hooked": true,
+  "cspViolations": [],
+  "checks": {
+    "style": {
+      "styleSheets": 1,
+      "styledElements": 4,
+      "canvasWidth": 390,
+      "canvasHeight": 844
+    },
+    "play": {
+      "input": "real pointer drag in sandbox iframe under portal CSP",
+      "beforeClosed": 0,
+      "afterClosed": 1,
+      "event": "stitch",
+      "threadSpent": 7.66
+    },
+    "game": {
+      "state": {
+        "over": false,
+        "outcome": null,
+        "score": 19233,
+        "elapsed": 0.950019,
+        "thread": 92.339928,
+        "ruptures": 0,
+        "closedCount": 1,
+        "endpoint": 1,
+        "selected": 2,
+        "guideVisible": true,
+        "event": "stitch",
+        "holes": [
+          {
+            "x": 154,
+            "y": 224
+          },
+          {
+            "x": 228,
+            "y": 300
+          },
+          {
+            "x": 148,
+            "y": 376
+          },
+          {
+            "x": 238,
+            "y": 452
+          },
+          {
+            "x": 157,
+            "y": 528
+          },
+          {
+            "x": 229,
+            "y": 604
+          },
+          {
+            "x": 151,
+            "y": 680
+          },
+          {
+            "x": 220,
+            "y": 756
+          }
+        ],
+        "paused": false,
+        "locale": "ko"
+      },
+      "emittedEvents": [
+        {
+          "contractVersion": 1,
+          "gameId": "papervein",
+          "sequence": 1,
+          "type": "ready"
+        },
+        {
+          "contractVersion": 1,
+          "gameId": "papervein",
+          "sequence": 2,
+          "type": "started",
+          "payload": {
+            "runId": "1"
+          }
+        }
+      ]
+    },
+    "pass": {
+      "stylesheetLoaded": true,
+      "styleRulesApplied": true,
+      "canvasLaidOut": true,
+      "noStyleCspViolation": true,
+      "noErrors": true,
+      "noMissingAssets": true,
+      "realPointerStitch": true,
+      "hostReadyAndStarted": true
+    }
+  },
+  "errors": [],
+  "missing": [],
+  "pass": true
+}

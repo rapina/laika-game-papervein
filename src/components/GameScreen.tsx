@@ -1,7 +1,6 @@
 import { useEffect, useRef } from 'react'
-import { useTranslation } from 'react-i18next'
 import type { GameResult } from '../game/types'
-import { SampleGame } from '../game/SampleGame'
+import { PaperVeinGame } from '../game/PaperVeinGame'
 
 interface Props {
     onGameOver(result: GameResult): void
@@ -10,11 +9,9 @@ interface Props {
 
 /**
  * Mounts the game runtime and forwards its lifecycle to the shell.
- * Swap `new SampleGame()` for the real game's runtime — nothing else in the
- * shell needs to change as long as it implements GameRuntime.
+ * Mounts the Paper Vein runtime and keeps the shell contract narrow.
  */
-export default function GameScreen({ onGameOver, onExit }: Props) {
-    const { t } = useTranslation()
+export default function GameScreen({ onGameOver }: Props) {
     const hostRef = useRef<HTMLDivElement>(null)
     const endedRef = useRef(false)
 
@@ -22,13 +19,12 @@ export default function GameScreen({ onGameOver, onExit }: Props) {
         const host = hostRef.current
         if (!host) return
 
-        const game = new SampleGame()
+        const game = new PaperVeinGame()
         game.mount(host, {
             onGameOver: (result) => {
                 if (endedRef.current) return
                 endedRef.current = true
-                // Let the runtime's game-over presentation breathe briefly.
-                setTimeout(() => onGameOver(result), 800)
+                onGameOver(result)
             },
         })
 
@@ -47,9 +43,6 @@ export default function GameScreen({ onGameOver, onExit }: Props) {
     return (
         <div className="screen game-screen">
             <div ref={hostRef} className="game-host" />
-            <button className="btn game-exit-btn" onClick={onExit}>
-                {t('game.exit')}
-            </button>
         </div>
     )
 }

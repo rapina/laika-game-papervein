@@ -1,4 +1,4 @@
-export type Locale = 'ko' | 'en' | 'zh' | 'ja'
+export type Locale = 'ko' | 'en'
 
 /**
  * Shell UI strings. Game content strings (rules, dialog, item names, …)
@@ -7,10 +7,10 @@ export type Locale = 'ko' | 'en' | 'zh' | 'ja'
  */
 export const translations: Record<Locale, Record<string, string>> = {
     ko: {
-        'title.name': 'PAPER VEIN',
-        'title.tagline': '새 게임을 시작하세요',
-        'title.play': '시작',
-        'title.ranking': '랭킹',
+        'title.name': '종이맥',
+        'title.tagline': '벌어지는 틈을 한 가닥으로',
+        'title.play': '수선 시작',
+        'title.ranking': '기록',
         'game.exit': '나가기',
         'ranking.title': '랭킹',
         'ranking.best': '최고 기록!',
@@ -22,9 +22,9 @@ export const translations: Record<Locale, Record<string, string>> = {
     },
     en: {
         'title.name': 'PAPER VEIN',
-        'title.tagline': 'Start your new game',
-        'title.play': 'PLAY',
-        'title.ranking': 'RANKING',
+        'title.tagline': 'Bind every opening with one strand',
+        'title.play': 'BEGIN MENDING',
+        'title.ranking': 'RECORDS',
         'game.exit': 'EXIT',
         'ranking.title': 'RANKING',
         'ranking.best': 'NEW BEST!',
@@ -33,33 +33,5 @@ export const translations: Record<Locale, Record<string, string>> = {
         'ranking.menu': 'MENU',
         'error.title': 'Error',
         'error.leaderboard': 'Could not open the leaderboard.',
-    },
-    zh: {
-        'title.name': 'PAPER VEIN',
-        'title.tagline': '开始你的新游戏',
-        'title.play': '开始',
-        'title.ranking': '排行榜',
-        'game.exit': '退出',
-        'ranking.title': '排行榜',
-        'ranking.best': '新纪录！',
-        'ranking.empty': '暂无记录',
-        'ranking.retry': '再来一次',
-        'ranking.menu': '菜单',
-        'error.title': '错误',
-        'error.leaderboard': '无法打开排行榜。',
-    },
-    ja: {
-        'title.name': 'PAPER VEIN',
-        'title.tagline': '新しいゲームを始めよう',
-        'title.play': 'スタート',
-        'title.ranking': 'ランキング',
-        'game.exit': '終了',
-        'ranking.title': 'ランキング',
-        'ranking.best': '新記録！',
-        'ranking.empty': 'まだ記録がありません',
-        'ranking.retry': 'リトライ',
-        'ranking.menu': 'メニューへ',
-        'error.title': 'エラー',
-        'error.leaderboard': 'リーダーボードを開けませんでした。',
     },
 }

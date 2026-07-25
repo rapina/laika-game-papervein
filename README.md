@@ -1,73 +1,48 @@
-# Laika Game Launchpad
+# 종이맥 / Paper Vein
 
 ## 한국어
 
-한 손 세로 웹 게임을 제작하고 검증하기 위한 공용 런타임 템플릿이다. React,
-PixiJS, Vite, Capacitor와 Apps in Toss 빌드 경로를 포함하며, 게임 규칙은
-`GameRuntime` 계약 뒤에 격리한다.
+벌어지는 젖은 종이의 틈을 한 가닥의 섬유로 꿰매는 한 손 건설 게임이다. 느슨한 실 끝을 빈 구멍까지 드래그해 놓는다. 먼 봉합은 여러 틈을 크게 당기지만 실을 더 쓰고 주변 장력을 높인다. 7개 틈을 모두 닫기 전에 세 번째 파열이 나거나 실이 다하면 실패한다.
 
-### 빠른 시작
+키보드는 방향키로 구멍을 고르고 Space로 실을 집고 놓는다. M은 음소거다. 결과 화면은 700ms 뒤 화면 탭이나 Space로 다시 시작한다.
 
 ```bash
-git clone https://github.com/rapina/laika-game-lunchpad.git my-game
-cd my-game
 npm ci
-npm run new-game -- --id com.example.mygame --name "MY GAME" --slug mygame --display "내 게임"
 npm test
+npm run build:web
 npm run smoke
-npm run dev
-```
-
-### 주요 검증
-
-```bash
-npm test
-npm run build
-npm run smoke
+node scripts/viewport-smoke.mjs
+node scripts/playability-sim.mjs
+node scripts/capture-evidence.mjs
 npm run build:arcade
+npm run csp
 ```
 
-결정론적 게임 규칙, 한국어·영어 기능 일치, 모바일 뷰포트, 입력 뒤 오디오
-시작, 일시정지·복귀와 아케이드 sandbox 계약을 검증한다.
-
-새 게임 공개 저장소의 이름은 `laika-game-<slug>`를 사용한다.
+결정론 규칙은 `src/game/papervein/rules.mjs`, 브라우저 런타임은 `src/game/PaperVeinGame.ts`에 있다. 검증 증거는 `verification/`과 `smoke-result.json`에 남는다.
 
 ## English
 
-This is the shared runtime template for building and verifying one-handed
-portrait web games. It includes React, PixiJS, Vite, Capacitor, and an Apps in
-Toss build path. Game rules stay isolated behind the `GameRuntime` contract.
+Paper Vein is a one-handed construction game about binding a wet sheet that keeps opening with one strand. Drag the loose end to an empty hole and release. Long stitches draw several gaps at once, but spend more thread and raise nearby tension. You fail if the third rupture occurs or the thread runs out before all seven gaps close.
 
-### Quick start
+Use the arrow keys to choose a hole and Space to pick up or release the strand. M toggles mute. After the 700ms result guard, tap the result screen or press Space to restart.
 
 ```bash
-git clone https://github.com/rapina/laika-game-lunchpad.git my-game
-cd my-game
 npm ci
-npm run new-game -- --id com.example.mygame --name "MY GAME" --slug mygame --display "My Game"
 npm test
+npm run build:web
 npm run smoke
-npm run dev
-```
-
-### Main checks
-
-```bash
-npm test
-npm run build
-npm run smoke
+node scripts/viewport-smoke.mjs
+node scripts/playability-sim.mjs
+node scripts/capture-evidence.mjs
 npm run build:arcade
+npm run csp
 ```
 
-The verification layer covers deterministic rules, Korean and English feature
-parity, mobile viewports, user-gesture audio, pause and resume behavior, and
-the Arcade sandbox contract.
+The deterministic rules live in `src/game/papervein/rules.mjs`; the browser runtime is `src/game/PaperVeinGame.ts`. Committed evidence lives in `verification/` and `smoke-result.json`.
 
-New public game repositories use the `laika-game-<slug>` naming scheme.
+## License
 
-## 라이선스 / License
-
-- 코드 / Code: [MIT](LICENSE)
-- 문서 / Documentation: [CC BY 4.0](CONTENT-LICENSE.md)
-- 프로젝트 아트 / Project artwork: [CC0 1.0](CONTENT-LICENSE.md)
+- Code: MIT
+- Documentation: CC BY 4.0
+- Original project artwork: CC0 1.0
 - Galmuri fonts: SIL Open Font License 1.1

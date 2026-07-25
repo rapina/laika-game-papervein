@@ -11,12 +11,12 @@ export const STORAGE_PREFIX = 'papervein'
 
 export const APP_CONFIG = {
     /** Reserve the bottom banner-ad slot. false → the game gets the full 9:16 frame. */
-    showAdBanner: true,
+    showAdBanner: false,
 
     /** Show an interstitial ad every N finished games (0 = never). */
-    interstitialEveryNGames: 3,
+    interstitialEveryNGames: 0,
 
     /** Logical design resolution of the game stage (portrait 9:16). */
-    designWidth: 400,
-    designHeight: 711,
+    designWidth: 390,
+    designHeight: 844,
 }

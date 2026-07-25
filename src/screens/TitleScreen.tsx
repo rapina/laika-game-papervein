@@ -6,7 +6,7 @@ interface Props {
     onRanking(): void
 }
 
-export default function TitleScreen({ onPlay, onRanking }: Props) {
+export default function TitleScreen({ onPlay }: Props) {
     const { t } = useTranslation()
 
     const cycleLocale = () => {
@@ -16,6 +16,8 @@ export default function TitleScreen({ onPlay, onRanking }: Props) {
 
     return (
         <div className="screen title-screen">
+            <img className="title-key" src="/assets/title-key.png" alt="" />
+            <div className="title-shade" />
             <div className="title-logo">
                 <h1>{t('title.name')}</h1>
                 <p className="title-tagline">{t('title.tagline')}</p>
@@ -23,9 +25,6 @@ export default function TitleScreen({ onPlay, onRanking }: Props) {
             <div className="title-menu">
                 <button className="btn btn-primary title-btn" onClick={onPlay}>
                     {t('title.play')}
-                </button>
-                <button className="btn title-btn" onClick={onRanking}>
-                    {t('title.ranking')}
                 </button>
                 <button className="btn btn-small" onClick={cycleLocale}>
                     {getLocale().toUpperCase()}
